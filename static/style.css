@@ -1,0 +1,18 @@
+.avatar-big{
+    height: 200px;
+    widht: 200py;
+    border-radius: 50%;
+}
+
+.avatar-sm{
+    height: 40px;
+    widht: 40py;
+    border-radius: 50%;
+}
+
+
+.logo-sm{
+    height: 30px;
+    widht: auto;
+}
+

@@ -1,0 +1,39 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+home
+{% endblock title %}
+
+{% block content %}
+helloooo!
+<hr>
+
+<form action="" method="POST">
+    {% csrf_token %}
+    {{ form|crispy }}
+    <button type="submit" class="btn btn-primary mt-3">Keresés</button>
+</form>
+<br>
+{% if order_df %}
+    Rendelések(orders_df):
+    {{ order_df|safe }}
+    <br>
+    Részletek (positions_df):
+    {{ positions_df|safe }}
+    <br>
+    merge_df:
+    {{ merged_df|safe }}
+    <br>
+    df_meals:
+    {{ df_meals|safe }}
+     <br>
+    df_pos:
+    {{ df_pos|safe }}
+
+
+{% else %}
+    <h3>No data</h3>
+{% endif %}
+
+{% endblock content %}

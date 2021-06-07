@@ -1,0 +1,45 @@
+{% load static %}
+
+{% url 'orders:home' as path_to_home %}
+{% url 'orders:list' as path_to_orders %}
+{% url 'profiles:my' as path_to_myprofile %}
+{% url 'meals:meal_list' as path_to_meals %}
+{% url 'logout' as path_to_logout %}
+{% url 'meals:meal_new' as path_to_meal_new %}
+
+<nav class="navbar navbar-expand-lg navbar-light bg-light">
+  <div class="container-fluid">
+    <a class="navbar-brand" href=""><img src="{% static 'logo.png' %}" class="logo-sm"></a>
+
+    <div class="collapse navbar-collapse" id="navbarNav">
+      <ul class="navbar-nav">
+        <li class="nav-item">
+          <a class="nav-link {% if request.path == path_to_home %} active {% endif %}" href="{{path_to_home}}">Home</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.path == path_to_orders %} active {% endif %}" href="{{path_to_orders}}">Rendelések</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.path == path_to_meals %} active {% endif %}" href="{{path_to_meals}}">Fogások</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.path == path_to_meal_new %} active {% endif %}" href="{{path_to_meal_new}}">Új étel felvétele</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link" href="">Ételek karbantartása</a>
+        </li>
+      </ul>
+    </div>
+    {% if request.user.is_authenticated %}
+      <div class="nav-item dropdown">
+        <div class="nav-link dropdown-toggle" id="navbarDropdownMenuLink" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+          <img src="{{request.user.profile.avatar.url}}" class="avatar-sm">&nbsp;{{request.user}}
+        </div>
+        <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
+          <li><a class="dropdown-item" href="{{path_to_myprofile}}">Profil</a></li>
+          <li><a class="dropdown-item" href="{{path_to_logout}}">Kijelentkezés</a></li>
+        </ul>
+      </div>
+    {% endif %}
+  </div>
+</nav>

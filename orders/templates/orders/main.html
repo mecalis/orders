@@ -1,0 +1,19 @@
+{% extends "base.html" %}
+
+{% block title %}
+orders list
+{% endblock title %}
+
+{% block content %}
+orders list
+<br>
+
+{% for obj in object_list %}
+<div class="card mb-1">
+    <a href="{{ obj.get_absolute_url }}" class="card-body"> {{ obj }} </a>
+</div>
+<!--    <br>-->
+
+{% endfor %}
+
+{% endblock content %}
