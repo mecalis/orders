@@ -6,7 +6,6 @@ home
 {% endblock title %}
 
 {% block content %}
-helloooo!
 <hr>
 
 <form action="" method="POST">
@@ -14,6 +13,7 @@ helloooo!
     {{ form|crispy }}
     <button type="submit" class="btn btn-primary mt-3">Keresés</button>
 </form>
+
 <br>
 {% if order_df %}
     Rendelések(orders_df):
@@ -36,4 +36,31 @@ helloooo!
     <h3>No data</h3>
 {% endif %}
 
+<form>
+  <div class="form-group row">
+    <label for="text1" class="col-sm-4 col-form-label">kaja1</label>
+    <div class="col-sm-2">
+      <input type="text" class="form-control" id="text1" placeholder="darabszám">
+    </div>
+
+      <div class="form-check col-sm-1">
+        <input class="form-check-input" type="checkbox" id="gridCheck1">
+        <label class="form-check-label" for="gridCheck1">
+          Doboz 1
+        </label>
+      </div>
+
+      <div class="form-check col-sm-1">
+        <input class="form-check-input" type="checkbox" id="gridCheck2">
+        <label class="form-check-label" for="gridCheck2">
+          Doboz 1
+        </label>
+      </div>
+  </div>
+    <hr>
+    <button type="submit" class="btn btn-primary mt-3">Rendelés feladása</button>
+
+</form>
+
 {% endblock content %}
+

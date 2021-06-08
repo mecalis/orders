@@ -4,6 +4,7 @@ from .models import Order
 from .forms import OrdersSearchForm
 import pandas as pd
 from .utils import get_customer_from_id
+from meals.models import Meal
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -17,6 +18,16 @@ def home_view(request):
     positions_df = None
     merged_df = None
     df_meals = None
+
+    napi_qs = []
+    allando_qs = []
+
+    napi_qs = Meal.objects.filter(type='2')
+    allando_qs = Meal.objects.filter(type='1')
+    print(napi_qs)
+    print('----------------')
+    print(allando_qs)
+
     if request.method == 'POST':
         date_from = request.POST.get('date_from')
         date_to = request.POST.get('date_to')
@@ -80,6 +91,8 @@ def home_view(request):
         'positions_df': positions_df,
         'merged_df': merged_df,
         'df_meals': df_meals,
+        'allando_qs': allando_qs,
+        'napi_qs': napi_qs,
         # 'df_user': df_user,
         # 'df_pos': df_pos_html,
     }

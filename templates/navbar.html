@@ -9,25 +9,25 @@
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <div class="container-fluid">
-    <a class="navbar-brand" href=""><img src="{% static 'logo.png' %}" class="logo-sm"></a>
+    <a class="navbar-brand" href="{{path_to_home}}"><img src="{% static 'logo.png' %}" class="logo-sm"></a>
 
     <div class="collapse navbar-collapse" id="navbarNav">
       <ul class="navbar-nav">
         <li class="nav-item">
-          <a class="nav-link {% if request.path == path_to_home %} active {% endif %}" href="{{path_to_home}}">Home</a>
+          <a class="nav-link {% if request.path == path_to_home %} active {% endif %}" href="{{path_to_home}}">Rendelések feladása!</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link {% if request.path == path_to_orders %} active {% endif %}" href="{{path_to_orders}}">Rendelések</a>
+          <a class="nav-link {% if request.path == path_to_orders %} active {% endif %}" href="{{path_to_orders}}">Megrendelve</a>
         </li>
         <li class="nav-item">
           <a class="nav-link {% if request.path == path_to_meals %} active {% endif %}" href="{{path_to_meals}}">Fogások</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link {% if request.path == path_to_meal_new %} active {% endif %}" href="{{path_to_meal_new}}">Új étel felvétele</a>
+          <a class="nav-link {% if request.path == path_to_meal_new %} active {% endif %}" href="{{path_to_meal_new}}">Új fogás felvétele</a>
         </li>
-        <li class="nav-item">
-          <a class="nav-link" href="">Ételek karbantartása</a>
-        </li>
+<!--        <li class="nav-item">-->
+<!--          <a class="nav-link" href="">Ételek karbantartása</a>-->
+<!--        </li>-->
       </ul>
     </div>
     {% if request.user.is_authenticated %}
