@@ -16,3 +16,7 @@
     widht: auto;
 }
 
+.not-visible {
+    display: none;
+}
+

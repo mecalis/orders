@@ -24,9 +24,8 @@ def home_view(request):
 
     napi_qs = Meal.objects.filter(type='2')
     allando_qs = Meal.objects.filter(type='1')
-    print(napi_qs)
-    print('----------------')
-    print(allando_qs)
+    egyeb_qs = Meal.objects.filter(type='4')
+    napi_tablas_qs = Meal.objects.filter(type='3')
 
     if request.method == 'POST':
         date_from = request.POST.get('date_from')
@@ -93,6 +92,8 @@ def home_view(request):
         'df_meals': df_meals,
         'allando_qs': allando_qs,
         'napi_qs': napi_qs,
+        'egyeb_qs': egyeb_qs,
+        'napi_tablas_qs': napi_tablas_qs,
         # 'df_user': df_user,
         # 'df_pos': df_pos_html,
     }

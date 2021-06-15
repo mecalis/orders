@@ -1,0 +1,25 @@
+<div class="form-group row mt-1 meal_inline">
+            <label for="{{ obj.pk }}" class="col-sm-4 col-form-label">{{ obj.name }}</label>
+            <div class="col-sm-1 meal_db">
+              <input type="text" class="form-control meal_db_input" id="{{ obj.pk }}" placeholder="darabszám" value="0">
+            </div>
+            <div class="col-sm-1">
+              <label class="">{{ obj.get_int_price }} Ft</label>
+            </div>
+            {% if obj.boxes == '1' or obj.boxes == '2' %}
+            <div class="form-check col-sm-1 box1">
+                <input class="form-check-input meal_box_1" type="checkbox" id="box1_{{ obj.pk }}_gridCheck1" checked>
+                <label class="form-check-label" for="box1_{{ obj.pk }}_gridCheck1">
+                  Box1
+                </label>
+            </div>
+            {% endif %}
+            {% if obj.boxes == '2' %}
+            <div class="form-check col-sm-1 box2">
+                <input class="form-check-input meal_box_2" type="checkbox" id="box2_{{ obj.pk }}_gridCheck2" checked>
+                <label class="form-check-label" for="box2_{{ obj.pk }}_gridCheck2">
+                Box2
+                </label>
+            </div>
+            {% endif %}
+</div>

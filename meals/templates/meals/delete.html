@@ -1,0 +1,14 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+<h3>Biztosan ki akarod ezt törölni?:</h3>
+<p> {{ object.name }}</p>
+
+<form method='POST' >{% csrf_token %}
+
+    <button class='btn btn-danger'>Igen, törlöm!</button>
+
+</form>
+{% endblock %}
