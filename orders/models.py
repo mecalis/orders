@@ -4,15 +4,7 @@ from profiles.models import Profile
 from django.utils import timezone
 from .utils import generate_code
 from django.shortcuts import reverse
-
-# Create your models here.
-# order:
-# meals
-# profile
-# date
-# date modified
-# price > számolni!
-# kifizetve
+import datetime
 
 class Position(models.Model):
     meal = models.ForeignKey(Meal, on_delete=models.CASCADE)
@@ -23,6 +15,8 @@ class Position(models.Model):
 
     def save(self, *args, **kwargs):
         self.price = self.meal.price * self.quantity
+        if self.created == None:
+            self.created = timezone.now()
         return super().save(*args, **kwargs)
     def get_orders_id(self):
         order_obj = self.order_set.first()
@@ -40,12 +34,16 @@ class Order(models.Model):
     paid = models.BooleanField(default=False)
     created = models.DateTimeField(blank=True)
     updated = models.DateTimeField(auto_now=True)
+    # comment = models.CharField(max_length=120, blank=True, default = '')
 
     def __str__(self):
-        return f"{self.customer.user} - {self.total_price}Ft - {self.updated.strftime('%Y/%m/%d')}"
+        return f"{self.customer.user} - {self.total_price}Ft"
 
     def get_absolute_url(self):
         return reverse('orders:detail', kwargs={'pk': self.pk})
+
+    def get_delete_url(self):
+        return reverse('orders:order_delete', kwargs={'pk': self.pk})
 
     def save(self, *args, **kwargs):
         if self.transacton_id == "":

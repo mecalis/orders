@@ -6,18 +6,25 @@
 {% url 'meals:meal_list' as path_to_meals %}
 {% url 'logout' as path_to_logout %}
 {% url 'meals:meal_new' as path_to_meal_new %}
+{% url 'orders:queries_view' as path_to_queries_view %}
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <div class="container-fluid">
     <a class="navbar-brand" href="{{path_to_home}}"><img src="{% static 'logo.png' %}" class="logo-sm"></a>
+    <button class="navbar-toggler" type="button" data-toggle="collapse" data-target="#navbarNav" aria-controls="navbarNav" aria-expanded="false" aria-label="Toggle navigation">
+      <span class="navbar-toggler-icon"></span>
+    </button>
 
     <div class="collapse navbar-collapse" id="navbarNav">
-      <ul class="navbar-nav">
+      <ul class="navbar-nav mr-auto">
         <li class="nav-item">
           <a class="nav-link {% if request.path == path_to_home %} active {% endif %}" href="{{path_to_home}}">Rendelések feladása!</a>
         </li>
         <li class="nav-item">
-          <a class="nav-link {% if request.path == path_to_orders %} active {% endif %}" href="{{path_to_orders}}">Megrendelve</a>
+          <a class="nav-link {% if request.path == path_to_orders %} active {% endif %}" href="{{path_to_orders}}">Rendelések</a>
+        </li>
+        <li class="nav-item">
+          <a class="nav-link {% if request.path == path_to_queries_view %} active {% endif %}" href="{{path_to_queries_view}}">Lekérdezések</a>
         </li>
         <li class="nav-item">
           <a class="nav-link {% if request.path == path_to_meals %} active {% endif %}" href="{{path_to_meals}}">Fogások</a>
@@ -37,6 +44,7 @@
         </div>
         <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink">
           <li><a class="dropdown-item" href="{{path_to_myprofile}}">Profil</a></li>
+<!--          <li><a class="dropdown-item" href="{{path_to_queries_view}}">Lekérdezések</a></li>-->
           <li><a class="dropdown-item" href="{{path_to_logout}}">Kijelentkezés</a></li>
         </ul>
       </div>

@@ -22,7 +22,10 @@ home
       <div class="modal-body">
         Aktuális rendelésed:
           <div id="order_data">
-            Üres!
+              <ul id="mylist">
+
+              </ul>
+            <div id="sum">Nincs rendelés!</div>
           </div>
 
       </div>
@@ -37,11 +40,11 @@ home
 
 <hr>
 
-<form action="" method="POST">
-    {% csrf_token %}
-    {{ form|crispy }}
-    <button type="submit" class="btn btn-primary mt-3">Keresés</button>
-</form>
+<!--<form action="" method="POST">-->
+<!--    {% csrf_token %}-->
+<!--    {{ form|crispy }}-->
+<!--    <button type="submit" class="btn btn-primary mt-3">Keresés</button>-->
+<!--</form>-->
 
 <br>
 {% if order_df %}
@@ -62,8 +65,11 @@ home
 {% else %}
 <!--    <h3>No data</h3>-->
 {% endif %}
+<div id="alert-box"></div>
+<button type="button" id="make-order" data-bs-toggle="modal" data-bs-target="#order-modal" class="btn btn-primary mt-3">Rendelés véglegesítése</button>
 <hr>
-<form>
+<form id="order_form">
+    {% csrf_token %}
     <div class="row">
         <div class="col-sm-4">Típus / fogás</div>
         <div class="col-sm-1">db</div>
@@ -96,6 +102,6 @@ home
 <!--    <button id="make-order" data-bs-toggle="modal" data-bs-target="#order-modal" class="btn btn-primary mt-3">Rendelés véglegesítése</button>-->
 
 </form>
-<button type="button" id="make-order" data-bs-toggle="modal" data-bs-target="#order-modal" class="btn btn-primary mt-3">Rendelés véglegesítése</button>
+
 {% endblock content %}
 

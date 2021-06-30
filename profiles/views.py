@@ -29,7 +29,7 @@ def my_profile_view(request):
 
 class UserFormView(View):
     form_class = UserForm
-    template_name = 'profiles/main.html'
+    template_name = 'profiles/register.html'
 
     #kap az ember egy üres formot
     def get(self, request):

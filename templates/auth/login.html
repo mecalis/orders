@@ -1,5 +1,6 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
+{% url 'profiles:register' as path_to_register %}
 
 {% block title %}
 login
@@ -21,7 +22,8 @@ login
                 {{form|crispy}}
                 <button type="submit" class="btn btn-primary mt-3">Bejelentkezés</button>
             </form>
-            vagy regisztráció
+<!--            vagy <a class="" href="my-profile/register/">regisztráció</a>-->
+            vagy <a class="" href="{% url 'register' %}">regisztráció</a>
         </div>
         <div class="col-6">
             news

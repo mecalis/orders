@@ -1,8 +1,10 @@
 from django.shortcuts import render, get_object_or_404, redirect
+from django.contrib.auth.decorators import login_required
 from .forms import MealModelForm
 from .models import Meal
 
 # Create your views here.
+@login_required
 def meal_create_view(request):
     # request.user -> return something
     form = MealModelForm(request.POST or None)
@@ -14,6 +16,7 @@ def meal_create_view(request):
     context = {'form': form}
     return render(request, template_name, context)
 
+@login_required
 def meal_update_view(request, pk=None):
     obj = None
     if pk:
@@ -27,16 +30,14 @@ def meal_update_view(request, pk=None):
         context['obj'] = obj
     return render(request, template_name, context)
 
+@login_required
 def meal_list_view(request):
-    qs = Meal.objects.all() # queryset -> list of python object
-    # if request.user.is_authenticated:
-    #     my_qs = BlogPost.objects.filter(user=request.user)
-    #     qs = (qs | my_qs).distinct()
+    qs = Meal.objects.all().order_by('-created')
     template_name = 'meals/list.html'
     context = {'object_list': qs}
     return render(request, template_name, context)
 
-# @staff_member_required
+@login_required
 def meal_delete_view(request, pk):
     obj = get_object_or_404(Meal, pk=pk)
     template_name = 'meals/delete.html'

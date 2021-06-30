@@ -9,6 +9,7 @@
         <div class="col-3">
         </div>
         <div class="col-9">
+            <h3>A rendelés {{ object }} részletei:</h3>
             <ul>
                 <li>Transaction id: <b>{{ object.transacton_id }} </b> </li>
                 <li>Teljes összeg: <b>{{ object.total_price }} </b> </li>
@@ -19,11 +20,12 @@
                     {% for list_item in list %}
                         <li><b>{{ list_item}} </b> </li>
                     {% endfor %}
-
-
                 </ul>
 
             </ul>
+
+            <a class="btn btn-sm btn-danger" href="{% url 'orders:order_delete' object.id %}">Törlés</a>
+
 
         </div>
     </div>

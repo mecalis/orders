@@ -1,0 +1,23 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block scripts %}
+
+{% endblock scripts %}
+
+{% block title %}
+DELETE
+{% endblock title %}
+
+
+{% block content %}
+<h1>Biztosan ki akarod törölni?:</h1>
+<p> {{ object.title }}</p>
+
+<form method='POST' >{% csrf_token %}
+
+    <button class='btn btn-danger'>Igen, törlöm!</button>
+
+</form>
+{% endblock content %}
