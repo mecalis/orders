@@ -19,25 +19,10 @@ orders list
 </div>
 <hr>
 {% for obj in object_list %}
-<div class="row">
-    <div class="card mb-1 mt-1 col-sm-4">
-        <a href="{{ obj.get_absolute_url }}" class="card-body"> {{ obj }} </a>
-    </div>
-    <div class="col-sm-4">
-        {% if request.user.is_staff %}
-            {% if obj.paid == True %}
-                <button type="button" id="{{ obj.pk }}" class="btn btn-success mt-3 order-toggle">Mégsem</button>
-            {% else %}
-                <button type="button" id="{{ obj.pk }}" class="btn btn-secondary mt-3 order-toggle">Váltás kifizetettre</button>
-            {% endif %}
-        {% else %}
-            <span> {{ obj.paid }}</span>
-        {% endif %}
-    </div>
-</div>
-<!--    <br>-->
-
+    {% include 'orders/orders_list_inline.html' %}
 {% endfor %}
+<hr>
+
 
 <form id="order_form">
     {% csrf_token %}

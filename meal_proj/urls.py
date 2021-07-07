@@ -19,6 +19,7 @@ from django.conf import settings
 from django.conf.urls.static import static
 from .views import login_view, logout_view
 from profiles.views import UserFormView
+from profiles.views import signup, activate, account_activation_sent
 
 
 urlpatterns = [
@@ -29,7 +30,12 @@ urlpatterns = [
     path('meals/', include('meals.urls', namespace='meals')),
     path('login/', login_view, name='login'),
     path('logout/', logout_view, name='logout'),
-    path('register/', UserFormView.as_view(), name='register'),
+    # path('register/', UserFormView.as_view(), name='register'),
+    path('register/', signup, name='register'),
+
+    path(r'^account_activation_sent/$', account_activation_sent, name='account_activation_sent'),
+    path(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
+        activate, name='activate'),
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

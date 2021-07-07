@@ -1,0 +1,24 @@
+<div class="row">
+    <div class="card mb-1 mt-1 col-sm-4">
+        <a href="{{ obj.get_absolute_url }}" class="card-body"> {{ obj }} </a>
+    </div>
+    <div class="card mb-1 mt-1 col-sm-2 text-center">
+        {% if obj.check_day == True %}
+            mai nap
+        {% else %}
+            {{ obj.get_created_day }}
+        {% endif %}
+    </div>
+    <div class="card mb-1 mt-1 col-sm-5 ">
+        {% if request.user.is_staff %}
+            {% if obj.paid == True %}
+                <button type="button" id="{{ obj.pk }}" class="btn btn-success mt-3 order-toggle">Mégsem</button>
+            {% else %}
+                <button type="button" id="{{ obj.pk }}" class="btn btn-secondary mt-3 order-toggle">Váltás kifizetettre</button>
+            {% endif %}
+        {% else %}
+<!--            <span class="text-center"> {{ obj.paid }}</span>-->
+            {{ obj.paid }}
+        {% endif %}
+    </div>
+</div>

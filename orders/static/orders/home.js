@@ -9,10 +9,12 @@ const handleAlerts = (type, msg) => {
     `
 }
 
-const orderForm = document.getElementById('order_form')
-const csrf = document.getElementsByName('csrfmiddlewaretoken')[0].value
-const orderBtn = document.getElementById('confirm-order')
+const orderForm = document.getElementById('order_form');
+const csrf = document.getElementsByName('csrfmiddlewaretoken')[0].value;
+const orderBtn = document.getElementById('confirm-order');
 var make_orderBtn = document.getElementById('make-order');
+
+var order_data = document.getElementById('order_data');
 
 let order_sum = 0
 let data = {};
@@ -72,6 +74,23 @@ make_orderBtn.addEventListener('click', ()=>{
                     var node = document.createElement("LI");
                     var textnode = document.createTextNode("ID: "+element_meal_db_input_id+" név: "+ element_meal_label_value+ " - " + element_meal_db_input_val+ " db"+" + " + element_meal_db_input_val*checkedValue + " Ft");
                     node.appendChild(textnode);
+
+                    node.appendChild(document.createElement("br"));
+
+                    var comment = document.createTextNode("Megjegyzés:   ")
+//                    comment.classList.add("megjegyzes");
+
+
+                    node.appendChild(comment);
+
+                    var input = document.createElement("input");
+                    input.type = "text";
+                    input.name = element_meal_db_input_id + "_input"
+                    input.id = element_meal_db_input_id + "_input"
+                    input.classList.add("input_class");
+                    input.classList.add("ml-2");
+                    node.appendChild(input);
+
                     document.getElementById("mylist").appendChild(node);
                     order_sum += element_meal_db_input_val*(checkedValue+meal_price)
                 }
@@ -86,6 +105,19 @@ make_orderBtn.addEventListener('click', ()=>{
 
 //RENDELÉS
 orderBtn.addEventListener('click', e=>{
+            var order_comments = {}
+            var order_inputs = order_data.getElementsByClassName("input_class");
+
+            Array.from(order_inputs).map(
+                (element) => {
+
+                var element_id = element.getAttribute("name");
+                var element_value = element.value;
+                order_comments[element_id] = element_value;
+//                console.log('name: ' + element_id + ' = ' + element_value);
+            })
+//            console.log(order_comments);
+
             e.preventDefault()
             console.log('Megrendelem! megnyomva!');
             console.log(data)
@@ -93,6 +125,7 @@ orderBtn.addEventListener('click', e=>{
             const formData = new FormData()
             formData.append('csrfmiddlewaretoken', csrf);
             formData.append('data', JSON.stringify(data));
+            formData.append('comment', JSON.stringify(order_comments));
             formData.append('boxdb', boxdb);
             $('#order-modal').modal('hide')
             $.ajax({

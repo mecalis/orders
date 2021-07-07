@@ -17,13 +17,13 @@ $('.order-toggle').click(function(){
                     console.log(response);
                      if (response['msg'] === 'FALSE') {
 
-                        $(id).html("Beállítva: 'MÉG TARTOZÁS' Módosítás?");
+                        $(id).html("Beállítva: 'MÉG TARTOZÁS' Módosítás?").removeClass('btn-success').addClass('btn-secondary');
 
 
                      };
                      if (response['msg'] === 'TRUE') {
 
-                        $(id).html("Beállítva: 'KIFIZETTVE' Módosítás?");
+                        $(id).html("Beállítva: 'KIFIZETTVE' Módosítás?").removeClass('btn-secondary').addClass('btn-success');
                       };
                 },
 

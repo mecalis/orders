@@ -44,8 +44,12 @@
     <!--    {{ df_meals|safe }}-->
     <!--    <br>-->
         Megrendelt ételek:
-        {{ div_table_meal.meals | safe }}
-        {{ div_table_meal.p | safe }}
+        <div class="row">
+            <div class="col-sm-6"> {{ div_table_meal.meals | safe }} </div>
+            <div class="col-sm-6"> {{ div_table_meal.p | safe }} </div>
+        </div>
+
+
 
         <hr>
         Rendelések:

@@ -13,7 +13,11 @@ DELETE
 
 {% block content %}
 <h1>Biztosan ki akarod törölni?:</h1>
-<p> {{ object.title }}</p>
+<p> {{ object }}</p>
+
+{% if message %}
+    {{message}}
+{% endif %}
 
 <form method='POST' >{% csrf_token %}
 

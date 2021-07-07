@@ -25,7 +25,7 @@ SECRET_KEY = 'if_)$p1ryk3og^141ij*ni4oxmju=r@h27hg0^n_2^*ybm)yaj'
 # SECURITY WARNING: don't run with debug turned on in production!
 DEBUG = True
 
-ALLOWED_HOSTS = ['192.168.1.159', '127.0.0.1', '192.168.1.171']
+ALLOWED_HOSTS = ['192.168.1.159', '127.0.0.1', '192.168.1.164']
 
 
 # Application definition
@@ -141,3 +141,11 @@ MEDIA_ROOT = os.path.join(BASE_DIR,'media')
 #AUTH
 
 LOGIN_URL = '/login/'
+
+# EMAIL_BACKEND = 'django.core.mail.backends.console.EmailBackend'
+
+EMAIL_HOST = 'smtp.gmail.com'
+EMAIL_USE_TLS = True
+EMAIL_PORT = 587
+EMAIL_HOST_USER = 'walter.the.footman@gmail.com'
+EMAIL_HOST_PASSWORD = 'lgiulsfhfvitjjtz'

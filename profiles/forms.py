@@ -2,6 +2,8 @@ from django import forms
 from django.contrib.auth.models import User
 from .models import Profile
 
+from django.contrib.auth.forms import UserCreationForm
+
 class UserForm(forms.ModelForm):
     password = forms.CharField(widget=forms.PasswordInput)
 
@@ -12,4 +14,14 @@ class UserForm(forms.ModelForm):
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
-        exclude = ('user',)
+        exclude = ('user', 'email_confirmed')
+
+class SignUpForm(UserCreationForm):
+    username = forms.CharField(max_length=254, help_text='Felhasználói név.', label='Név:')
+    email = forms.EmailField(max_length=254, help_text='Szükséges. Valós e-mail címet adj meg!', label='E-mail cím:')
+    password1 = forms.CharField(widget=forms.PasswordInput, help_text='Biztonságos jelszót adj meg!.', label='Jelszó:')
+    password2 = forms.CharField(widget=forms.PasswordInput, label='Jelszó ellenőrzése:')
+
+    class Meta:
+        model = User
+        fields = ('username', 'email', 'password1', 'password2', )

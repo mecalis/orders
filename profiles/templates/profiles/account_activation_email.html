@@ -1,0 +1,10 @@
+{% autoescape off %}
+Szia {{ user.username }}!
+
+Kérlek kattints az alábbi linkre, hogy aktív legyen a felhasználói neved!
+
+http://{{ domain }}{% url 'activate' uidb64=uid token=token %}
+
+Szép napot!
+Üdv: Walter
+{% endautoescape %}

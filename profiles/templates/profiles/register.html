@@ -10,7 +10,14 @@ my profile
     <form action="" method="POST" enctype="multipart/form-data">
         {% csrf_token %}
         {{form|crispy}}
+<!--        {% for field in form %}-->
+<!--            <div class="fieldWrapper">-->
+<!--                {{ field.errors }}-->
+<!--                {{ field.label_tag }} {{ field }}-->
+<!--            </div>-->
+<!--        {% endfor %}-->
         <button type="submit" class="btn btn-primary mt-3">Regisztrálok</button>
     </form>
+
 
 {% endblock content %}

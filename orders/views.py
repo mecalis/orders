@@ -3,11 +3,12 @@ from django.views.generic import ListView, DetailView
 from .models import Order, Position
 from .forms import OrdersSearchForm
 import pandas as pd
-from .utils import get_customer_from_id
+from .utils import get_customer_from_id, render_pdf_view
 from meals.models import Meal
 from profiles.models import Profile
 import json
 from datetime import datetime
+from datetime import date
 
 from django.http import JsonResponse
 
@@ -24,6 +25,12 @@ from bokeh.embed import components
 from bokeh.transform import cumsum
 from bokeh.layouts import column, row,Spacer, WidgetBox
 from bokeh.palettes import Category20c
+
+# PDF készítése
+from django.conf import settings
+from django.http import HttpResponse
+from django.template.loader import get_template
+from xhtml2pdf import pisa
 
 # Create your views here.
 
@@ -122,7 +129,10 @@ class OrderListView(LoginRequiredMixin, ListView):
 @login_required
 def order_list_view(request):
     qs = Order.objects.all().order_by('-created')
-    return render(request, 'orders/main.html', {'object_list': qs})
+    today = date.today()
+    qs_today = qs.filter(created__year=today.year, created__month=today.month, created__day=today.day)
+
+    return render(request, 'orders/main.html', {'object_list': qs, 'qs_today': qs_today})
 
 class OrderDetailView(LoginRequiredMixin, DetailView):
     model = Order
@@ -140,27 +150,21 @@ def order_new(request):
     data = None
     if request.method == "POST" and request.is_ajax():
         data = json.loads(request.POST.get('data', ''))
+        comments = json.loads(request.POST.get('comment', ''))
         boxdb = request.POST.get('boxdb', '')
         profile = Profile.objects.get(user=request.user)
 
-        print("Boxdb:", boxdb)
-        print("DATA:")
+        print("Comments: ", comments)
         print("post data", data)
-        print("Kulcsok:")
         order = Order(customer=profile)
         order.save()
-        for key in list(data.keys()):
+        for key, comment in zip(list(data.keys()), list(comments.keys())):
             obj = get_object_or_404(Meal, pk=int(key))
             db = int(data[key])
-            print("MEAL:", obj)
-            print("darabszám", data[key])
-            pos = Position.objects.create(meal=obj, quantity=db)
+            comment_string = comments[comment]
+            pos = Position.objects.create(meal=obj, quantity=db, comment=comment_string)
             pos.save()
-
             order.positions.add(pos)
-        # order.save()
-        print(order)
-
         return JsonResponse({'msg': 'beírva'})
 
 
@@ -185,6 +189,7 @@ def queries_view(request):
             order_df = pd.DataFrame(qs.values())
             order_df['customer_id'] = order_df['customer_id'].apply(get_customer_from_id)
             order_df['created'] = order_df['created'].apply(lambda x: x.strftime('%Y-%m-%d'))
+            order_df['updated'] = order_df['updated'].apply(lambda x: x.strftime('%Y-%m-%d %H:%M:%S'))
 
             order_df.rename({'customer_id': 'ordered by', 'id': 'orders_id'}, axis=1, inplace=True)
             order_df['ordered by'] = order_df['ordered by'].apply(lambda x: str(x))
@@ -195,6 +200,7 @@ def queries_view(request):
                     obj = {
                         'position_id': pos.id,
                         'meal': pos.meal.name,
+                        'meal_commented': pos.full_name(),
                         'quantity:': pos.quantity,
                         'price': pos.price,
                         'orders_id': pos.get_orders_id(),
@@ -202,7 +208,9 @@ def queries_view(request):
                     positions_data.append(obj)
 
             positions_df = pd.DataFrame(positions_data)
+            positions_df['meal'] = positions_df['meal_commented'].apply(lambda x: str(x))
             merged_df = pd.merge(order_df, positions_df, on='orders_id')
+            # print(merged_df)
             df_meals = positions_df.groupby('meal', as_index=False)['quantity:'].agg('sum')
 
 
@@ -211,13 +219,13 @@ def queries_view(request):
 
             source_orders = ColumnDataSource(order_df)
             columns = [
-                TableColumn(field="orders_id", title="orders_id"),
-                TableColumn(field="transacton_id", title="transacton_id"),
-                TableColumn(field="total_price", title="total_price"),
-                TableColumn(field="ordered by", title="ordered by"),
-                TableColumn(field="paid", title="paid"),
-                TableColumn(field="created", title="created"),
-                TableColumn(field="updated", title="updated"),
+                TableColumn(field="orders_id", title="ID"),
+                TableColumn(field="transacton_id", title="tranzakció száma"),
+                TableColumn(field="total_price", title="teljes összeg"),
+                TableColumn(field="ordered by", title="megrendelő"),
+                TableColumn(field="paid", title="kifizetve"),
+                TableColumn(field="created", title="készítve"),
+                TableColumn(field="updated", title="módosítva"),
             ]
             data_table_orders = DataTable(source=source_orders, columns=columns, width=800, height=400)
 
@@ -233,19 +241,19 @@ def queries_view(request):
 
             source_merged = ColumnDataSource(merged_df)
             columns = [
-                TableColumn(field="orders_id", title="rendelés ID"),
-                TableColumn(field="transacton_id", title="tranzakció száma"),
-                TableColumn(field="total_price", title="teljes összeg"),
+                TableColumn(field="orders_id", title="ID", width=15),
+                TableColumn(field="transacton_id", title="tranzakció száma", width=280),
+                TableColumn(field="total_price", title="teljes összeg", width=150),
                 TableColumn(field="ordered by", title="megrendelő"),
-                TableColumn(field="paid", title="kifizetve"),
-                TableColumn(field="created", title="készítve"),
+                TableColumn(field="paid", title="kifizetve", width=80),
+                TableColumn(field="created", title="készítve", width=170),
                 TableColumn(field="updated", title="módosítva"),
-                TableColumn(field="position_id", title="pozíció ID"),
+                TableColumn(field="position_id", title="pozíció ID", width=150),
                 TableColumn(field="meal", title="étel"),
-                TableColumn(field="quantity:", title="mennyiség"),
-                TableColumn(field="price", title="ár"),
+                TableColumn(field="quantity:", title="mennyiség", width=120),
+                TableColumn(field="price", title="ár", width=120),
             ]
-            data_table_merged = DataTable(source=source_merged, columns=columns, width=800)
+            data_table_merged = DataTable(source=source_merged, columns=columns, width=1200)
 
             source_meal = ColumnDataSource(df_meals)
             columns = [
@@ -257,41 +265,40 @@ def queries_view(request):
                                         )
 
             df_pie = df_meals.copy()
-            df_pie['angle'] = df_pie['quantity:'] / df_pie['quantity:'].sum() * 2 * pi
-            df_pie['meal'] = df_pie['meal'].apply(lambda x: str(x))
-            df_pie['color'] = Category20c[df_pie.shape[0]]
-            df_pie.rename({'quantity:': 'db'}, axis=1, inplace=True)
-            print(df_pie)
-            p = figure(plot_height=350, title="Megoszlás", toolbar_location=None,tools="hover", tooltips="@meal: @db", x_range=(-0.5, 1.0))
 
-            p.wedge(x=0, y=1, radius=0.4, start_angle=cumsum('angle', include_zero=True), end_angle=cumsum('angle'),line_color="white", fill_color='color', legend_field='meal', source=df_pie)
+            to_convert = {
+                'orders': data_table_orders,
+                'merged': data_table_merged,
+                'meals': data_table_meal,
 
-            p.axis.axis_label = None
-            p.axis.visible = False
-            p.grid.grid_line_color = None
+            }
 
-            layout = column(
-                Div(text="Rendelések:", height=80, sizing_mode="stretch_width"),
-                data_table_orders,
-                # data_table_positions,
-                Div(text='Részletek:', height=80, sizing_mode="stretch_width"),
-                data_table_merged,
-                Div(text='Rendelt ételek:', height=80, sizing_mode="stretch_width"),
-                data_table_meal,
+            if df_pie.shape[0] >2:
+                df_pie['angle'] = df_pie['quantity:'] / df_pie['quantity:'].sum() * 2 * pi
+                df_pie['meal'] = df_pie['meal'].apply(lambda x: str(x))
+                # print(df_pie)
+                # print(df_pie.shape[0])
 
-                #  Spacer(width=100),
-                # WidgetBox(data_table),
-            )
+                df_pie['color'] = Category20c[df_pie.shape[0]]
+                df_pie.rename({'quantity:': 'db'}, axis=1, inplace=True)
+                # print(df_pie)
+                p = figure(plot_height=450, title="Megoszlás", toolbar_location=None,tools="hover", tooltips="@meal: @db", x_range=(-0.5, 1.0))
 
-            # output_file("DATATABLE TEST.html")
-            # show(p)
-            # script_table_orders, div_table_orders = components(data_table_orders)
-            # script_table_meal, div_table_meal = components(layout)
-            script_table_meal, div_table_meal = components({'orders': data_table_orders,
-                                                            'merged': data_table_merged,
-                                                            'meals': data_table_meal,
-                                                            'p': p,
-                                                            })
+                p.wedge(x=0, y=1, radius=0.4, start_angle=cumsum('angle', include_zero=True), end_angle=cumsum('angle'),line_color="white", fill_color='color', legend_field='meal', source=df_pie)
+
+                p.axis.axis_label = None
+                p.axis.visible = False
+                p.grid.grid_line_color = None
+                to_convert['p'] = p
+
+            #
+            # script_table_meal, div_table_meal = components({
+            #                                                 'orders': data_table_orders,
+            #                                                 'merged': data_table_merged,
+            #                                                 'meals': data_table_meal,
+            #                                                 'p': p,
+            #                                                 })
+            script_table_meal, div_table_meal = components(to_convert)
 
 
 
@@ -302,6 +309,33 @@ def queries_view(request):
             merged_df = merged_df.to_html()
             positions_df = positions_df.to_html()
             df_meals = df_meals.to_html()
+
+            # pdf_context = {'myvar': 'hello',
+            #                'order_df': order_df,
+            #                'merged_df': merged_df,
+            #                'df_meals': df_meals,
+            #                }
+            #
+            # template_path = 'orders\pdf.html'
+            # context = pdf_context
+            # # Create a Django response object, and specify content_type as pdf
+            # response = HttpResponse(content_type='application/pdf')
+            # # letölthető:
+            # # response['Content-Disposition'] = 'attachment; filename="report.pdf"'
+            # # display
+            # response['Content-Disposition'] = 'filename="report.pdf"'
+            # # find the template and render it.
+            # template = get_template(template_path)
+            # html = template.render(context)
+            #
+            # # create a pdf
+            # pisa_status = pisa.CreatePDF(
+            #     html, dest=response)
+            # # if error then show some funy view
+            # if pisa_status.err:
+            #     return HttpResponse('We had some errors <pre>' + html + '</pre>')
+            # return response
+            # # render_pdf_view(pdf_context)
 
     context = {
         'form': form,
@@ -316,6 +350,10 @@ def queries_view(request):
         # 'df_user': df_user,
         # 'df_pos': df_pos_html,
     }
+
+
+
+
     return render(request, 'orders/queries.html', context)
 
 @staff_member_required
@@ -328,21 +366,46 @@ def order_toggle_view(request):
         if obj.paid == True:
             obj.paid = False
             obj.save()
-            print(obj, ' átváltva FALSE-ra')
+            # print(obj, ' átváltva FALSE-ra')
             return JsonResponse({'msg': 'FALSE', 'id': id})
         else:
             obj.paid = True
             obj.save()
-            print(obj, ' átváltva TRUE-ra')
+            # print(obj, ' átváltva TRUE-ra')
             return JsonResponse({'msg': 'TRUE', 'id': id})
 
 @login_required
 def order_delete_view(request, pk):
-
+    context = {}
     obj = get_object_or_404(Order, pk=pk)
     template_name = 'orders/delete.html'
-    if request.method == "POST":
-        obj.delete()
-        return redirect("/orders")
     context = {"object": obj}
+    if request.method == "POST":
+        if str(request.user) == str(obj.customer) or request.user.is_staff:
+            print('Törlő: ',request.user,' Tulaj: ',obj.customer)
+            obj.delete()
+            return redirect("/orders")
+        context['message'] = "Ehhez nincs jogosultságod. Megpróbálod mégegyszer, hátha sikerül?"
     return render(request, template_name, context)
+
+@login_required
+def render_pdf_view(request):
+    template_path = 'orders\pdf.html'
+    context = {'myvar': 'hello world'}
+    # Create a Django response object, and specify content_type as pdf
+    response = HttpResponse(content_type='application/pdf')
+    #letölthető:
+    # response['Content-Disposition'] = 'attachment; filename="report.pdf"'
+    #display
+    response['Content-Disposition'] = 'filename="report.pdf"'
+    # find the template and render it.
+    template = get_template(template_path)
+    html = template.render(context)
+
+    # create a pdf
+    pisa_status = pisa.CreatePDF(
+       html, dest=response)
+    # if error then show some funy view
+    if pisa_status.err:
+       return HttpResponse('We had some errors <pre>' + html + '</pre>')
+    return response

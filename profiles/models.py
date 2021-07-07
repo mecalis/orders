@@ -9,6 +9,7 @@ class Profile(models.Model):
     avatar = models.ImageField(upload_to='avatars', default='no_picture.png')
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
+    email_confirmed = models.BooleanField(default=False)
 
     def __str__(self):
         # return f"Profile of {self.user.username}"
