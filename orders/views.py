@@ -7,7 +7,7 @@ from .utils import get_customer_from_id, render_pdf_view
 from meals.models import Meal
 from profiles.models import Profile
 import json
-from datetime import datetime
+from datetime import datetime,timedelta
 from datetime import date
 
 from django.http import JsonResponse
@@ -158,7 +158,8 @@ def order_new(request):
         print("post data", data)
         order = Order(customer=profile)
         order.save()
-        for key, comment in zip(list(data.keys()), list(comments.keys())):
+
+        for key, comment in zip(sorted(list(data.keys())), sorted(list(comments.keys()))):
             obj = get_object_or_404(Meal, pk=int(key))
             db = int(data[key])
             comment_string = comments[comment]
@@ -183,7 +184,12 @@ def queries_view(request):
     if request.method == 'POST':
         date_from = request.POST.get('date_from')
         date_to = request.POST.get('date_to')
+        only_self = request.POST.get('only_self')
+        print('Only:', only_self)
         qs = Order.objects.filter(created__date__lte=date_to, created__date__gte = date_from)
+        if only_self:
+            profile = Profile.objects.get(user=request.user)
+            qs = qs.filter(customer = profile)
         # print(qs.query)
         if len(qs) > 0:
             order_df = pd.DataFrame(qs.values())
@@ -193,6 +199,7 @@ def queries_view(request):
 
             order_df.rename({'customer_id': 'ordered by', 'id': 'orders_id'}, axis=1, inplace=True)
             order_df['ordered by'] = order_df['ordered by'].apply(lambda x: str(x))
+            order_df['created'] = order_df['created'].apply(lambda x: str(x))
 
             positions_data = []
             for order in qs:
@@ -210,7 +217,6 @@ def queries_view(request):
             positions_df = pd.DataFrame(positions_data)
             positions_df['meal'] = positions_df['meal_commented'].apply(lambda x: str(x))
             merged_df = pd.merge(order_df, positions_df, on='orders_id')
-            # print(merged_df)
             df_meals = positions_df.groupby('meal', as_index=False)['quantity:'].agg('sum')
 
 
@@ -219,22 +225,22 @@ def queries_view(request):
 
             source_orders = ColumnDataSource(order_df)
             columns = [
-                TableColumn(field="orders_id", title="ID"),
-                TableColumn(field="transacton_id", title="tranzakció száma"),
-                TableColumn(field="total_price", title="teljes összeg"),
-                TableColumn(field="ordered by", title="megrendelő"),
-                TableColumn(field="paid", title="kifizetve"),
-                TableColumn(field="created", title="készítve"),
+                TableColumn(field="orders_id", title="ID",  width=15),
+                TableColumn(field="transacton_id", title="tranzakció száma",  width=250),
+                TableColumn(field="total_price", title="teljes összeg", width=150),
+                TableColumn(field="ordered by", title="megrendelő", width=150),
+                TableColumn(field="paid", title="kifizetve", width=80),
+                TableColumn(field="created", title="készítve", width=170),
                 TableColumn(field="updated", title="módosítva"),
             ]
             data_table_orders = DataTable(source=source_orders, columns=columns, width=800, height=400)
 
             source_positions = ColumnDataSource(positions_df)
             columns = [
-                TableColumn(field="position_id", title="pozíció ID"),
+                TableColumn(field="position_id", title="pozíció ID", width=15),
                 TableColumn(field="meal", title="étel"),
-                TableColumn(field="quantity:", title="mennyiség"),
-                TableColumn(field="price", title="ár"),
+                TableColumn(field="quantity:", title="mennyiség", width=120),
+                TableColumn(field="price", title="ár", width=120),
                 TableColumn(field="orders_id", title="rendelés ID"),
             ]
             data_table_positions = DataTable(source=source_positions, columns=columns, width=800, )
@@ -298,6 +304,19 @@ def queries_view(request):
             #                                                 'meals': data_table_meal,
             #                                                 'p': p,
             #                                                 })
+
+            ## BAR PLOT ###
+            if only_self:
+                # print(order_df)
+                # print('###')
+                # print(pd.unique(order_df['created']))
+                source = ColumnDataSource(order_df[['total_price', 'created']])
+                bar = figure(x_range=pd.unique(order_df['created']), plot_height=250, title="Költéseim:", tools = '',
+                             tooltips="@total_price Ft")
+                bar.vbar(x='created', top='total_price', width=0.9, source=source)
+                # show(bar)
+                # to_convert['bar'] = bar
+
             script_table_meal, div_table_meal = components(to_convert)
 
 
