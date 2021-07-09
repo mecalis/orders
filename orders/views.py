@@ -32,6 +32,9 @@ from django.http import HttpResponse
 from django.template.loader import get_template
 from xhtml2pdf import pisa
 
+#Vágólap
+import pyperclip
+
 # Create your views here.
 
 @login_required
@@ -325,11 +328,17 @@ def queries_view(request):
 
             meals = []
             for i in range(df_meals.shape[0]):
-                row = f"{str(df_meals.iloc[i, 0])} - {str(df_meals.iloc[i, 1])} db"
+                row = f"{str(df_meals.iloc[i, 1])}x - {str(df_meals.iloc[i, 0])}"
                 meals.append(row)
                 # print(row)
 
+            meals_to_clipboard = ""
+            for row in meals:
+                meals_to_clipboard += row + '\n'
+            print(meals_to_clipboard)
 
+            pyperclip.copy(meals_to_clipboard)
+            s = pyperclip.paste()
 
             order_df = order_df.to_html()
             merged_df = merged_df.to_html()
