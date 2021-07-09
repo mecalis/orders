@@ -15,6 +15,7 @@
 
 {{ script_table_meal | safe }}
 
+<script src="{% static 'orders/queries.js' %}" defer></script>
 {% endblock scripts %}
 
 {% block title %}
@@ -22,6 +23,34 @@
 {% endblock title %}
 
 {% block content %}
+<!-- Modal -->
+<div class="modal fade" id="order-show-modal" tabindex="-1" aria-labelledby="exampleModalLabel" aria-hidden="true">
+  <div class="modal-dialog">
+    <div class="modal-content">
+      <div class="modal-header">
+        <h5 class="modal-title" id="exampleModalLabel">Eddig megrendelt ételek:</h5>
+        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+      </div>
+      <div class="modal-body">
+<!--          <div id="order_data">-->
+<!--              <ul id="mylist">-->
+<!--              </ul>-->
+<!--            <div id="meal-sum">Nincs rendelés!</div>-->
+<!--          </div>-->
+
+          {% for meal in meals %}
+            <p>{{meal}}</p>
+          {% endfor %}
+      </div>
+      <div class="modal-footer">
+<!--        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Mégsem</button>-->
+<!--        <button type="button" class="btn btn-primary" id="confirm-order">Megrendelem!</button>-->
+      </div>
+    </div>
+  </div>
+</div>
+<!-- Modal vége -->
+
 
     <form action="" method="POST">
         {% csrf_token %}
@@ -29,27 +58,18 @@
         <button type="submit" class="btn btn-primary mt-3">Keresés</button>
     </form>
 
-    <br>
+<!--    <br>-->
     {% if order_df %}
-    <!--    Rendelések(orders_df):-->
-    <!--    {{ order_df|safe }}-->
-    <!--    <br>-->
-    <!--    Részletek (positions_df):-->
-    <!--    {{ positions_df|safe }}-->
-    <!--    <br>-->
-    <!--    merge_df:-->
-    <!--    {{ merged_df|safe }}-->
-    <!--    <br>-->
-    <!--    df_meals:-->
-    <!--    {{ df_meals|safe }}-->
-    <!--    <br>-->
-        Megrendelt ételek:
+
+        <hr>
+        <div class="row col-sm-8">
+            <p class="col-sm-3 mt-1">Megrendelt ételek:</p>
+            <button type="button" id="show-meals" data-bs-toggle="modal" data-bs-target="#order-show-modal" class="btn btn-primary col-sm-5">Ételek mutatása másolhatóan.</button>
+        </div>
         <div class="row">
             <div class="col-sm-6"> {{ div_table_meal.meals | safe }} </div>
             <div class="col-sm-6"> {{ div_table_meal.p | safe }} </div>
         </div>
-
-
 
         <hr>
         Rendelések:

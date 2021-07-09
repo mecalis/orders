@@ -180,12 +180,14 @@ def queries_view(request):
     div_table_meal = None
     script_table_orders = None
     div_table_orders = None
+    meals = None
+    context = {}
 
     if request.method == 'POST':
         date_from = request.POST.get('date_from')
         date_to = request.POST.get('date_to')
         only_self = request.POST.get('only_self')
-        print('Only:', only_self)
+        # print('Only:', only_self)
         qs = Order.objects.filter(created__date__lte=date_to, created__date__gte = date_from)
         if only_self:
             profile = Profile.objects.get(user=request.user)
@@ -267,7 +269,7 @@ def queries_view(request):
                 TableColumn(field="quantity:", title="Darabszám"),
             ]
             data_table_meal = DataTable(source=source_meal, columns=columns, height_policy='auto',
-                                        height=250
+                                        height=500
                                         )
 
             df_pie = df_meals.copy()
@@ -318,10 +320,15 @@ def queries_view(request):
                 # to_convert['bar'] = bar
 
             script_table_meal, div_table_meal = components(to_convert)
-
-
-
             ######################### BOKEH VÉGE #################
+
+
+            meals = []
+            for i in range(df_meals.shape[0]):
+                row = f"{str(df_meals.iloc[i, 0])} - {str(df_meals.iloc[i, 1])} db"
+                meals.append(row)
+                # print(row)
+
 
 
             order_df = order_df.to_html()
@@ -368,6 +375,7 @@ def queries_view(request):
         'div_table_orders': div_table_orders,
         # 'df_user': df_user,
         # 'df_pos': df_pos_html,
+        'meals': meals,
     }
 
 
