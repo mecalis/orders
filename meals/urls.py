@@ -4,6 +4,7 @@ from .views import (
     meal_update_view,
     meal_list_view,
     meal_delete_view,
+    meal_list_view_paginated,
 )
 
 app_name = 'meals'
@@ -12,7 +13,8 @@ urlpatterns = [
     # path('', home_view, name='home'),
     path('new/', meal_create_view, name='meal_new'),
     path('<pk>/', meal_update_view, name='meal_update'),
-    path('', meal_list_view, name='meal_list'),
+    # path('', meal_list_view, name='meal_list'),
+    path('', meal_list_view_paginated, name='meal_list'),
     path('<pk>/delete/', meal_delete_view, name ='meal_delete'),
     # path('orders/', order_list_view, name='list'),
     # path('orders/<pk>/', order_detail_view, name='detail')

@@ -1,0 +1,17 @@
+<div class="pagination">
+    <span class="step-links">
+        {% if page_obj.has_previous %}
+            <a href="?page=1">&laquo; első</a>
+            <a href="?page={{ page_obj.previous_page_number }}">előző</a>
+        {% endif %}
+
+        <span class="current">
+             {{ page_obj.number }} / {{ page_obj.paginator.num_pages }}
+        </span>
+
+        {% if page_obj.has_next %}
+            <a href="?page={{ page_obj.next_page_number }}">következő</a>
+            <a href="?page={{ page_obj.paginator.num_pages }}">utolsó &raquo;</a>
+        {% endif %}
+    </span>
+</div>

@@ -126,6 +126,7 @@ def home_view(request):
 
 class OrderListView(LoginRequiredMixin, ListView):
     model = Order
+    paginate_by = 2
     template_name = 'orders/main.html'
 
 @login_required

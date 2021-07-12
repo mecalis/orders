@@ -18,6 +18,7 @@ app_name = 'orders'
 urlpatterns = [
     path('', home_view, name='home'),
     path('orders/', order_list_view, name='list'),
+    path('orders2/', OrderListView.as_view, name='list2'),
     path('orders/<pk>/', order_detail_view, name='detail'),
     path('orders-new/', order_new, name='new'),
     path('orders-queries/', queries_view, name='queries_view'),

@@ -1,0 +1,24 @@
+{% extends "base.html" %}
+
+{% block title %}
+Fogások listája:
+{% endblock title %}
+
+{% block content %}
+<div>Fogások listája:</div>
+<hr>
+{% include 'meals/paginator.html' %}
+<hr>
+{% for obj in page_obj %}
+<div class="card mb-1">
+    <a href="{{ obj.get_absolute_url }}" class="card-body"> {{ obj.full_name }} </a>
+</div>
+
+{% endfor %}
+<hr>
+{% include 'meals/paginator.html' %}
+<hr>
+
+
+
+{% endblock content %}

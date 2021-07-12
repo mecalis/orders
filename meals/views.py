@@ -3,6 +3,8 @@ from django.contrib.auth.decorators import login_required
 from .forms import MealModelForm
 from .models import Meal
 
+from django.core.paginator import Paginator
+
 # Create your views here.
 @login_required
 def meal_create_view(request):
@@ -35,6 +37,18 @@ def meal_list_view(request):
     qs = Meal.objects.all().order_by('-created')
     template_name = 'meals/list.html'
     context = {'object_list': qs}
+    return render(request, template_name, context)
+
+@login_required
+def meal_list_view_paginated(request):
+    qs = Meal.objects.all().order_by('-created')
+    paginator = Paginator(qs, 10)
+    template_name = 'meals/list_paginated.html'
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    context = {'object_list': qs,
+               'page_obj': page_obj,
+               }
     return render(request, template_name, context)
 
 @login_required
