@@ -8,3 +8,11 @@ class MealModelForm(forms.ModelForm):
         widgets = {
             'day': forms.DateInput(attrs={'type': 'date'}),
         }
+        labels = {
+            'name': 'Megnevezés',
+            'price': 'Ár',
+            'type': 'Típus',
+            'description': 'Leírás',
+            'boxes': 'Dobozok száma',
+            'day': 'Megjelenés napja',
+        }
