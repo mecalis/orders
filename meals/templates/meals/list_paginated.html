@@ -6,7 +6,7 @@ Fogások listája:
 
 {% block content %}
 <div>Fogások listája:</div>
-<hr>
+
 {% include 'meals/paginator.html' %}
 <hr>
 {% for obj in page_obj %}
@@ -17,7 +17,7 @@ Fogások listája:
 {% endfor %}
 <hr>
 {% include 'meals/paginator.html' %}
-<hr>
+
 
 
 

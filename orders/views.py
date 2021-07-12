@@ -32,6 +32,8 @@ from django.http import HttpResponse
 from django.template.loader import get_template
 from xhtml2pdf import pisa
 
+#Lapozás
+from django.core.paginator import Paginator
 
 
 # Create your views here.
@@ -134,8 +136,10 @@ def order_list_view(request):
     qs = Order.objects.all().order_by('-created')
     today = date.today()
     qs_today = qs.filter(created__year=today.year, created__month=today.month, created__day=today.day)
-
-    return render(request, 'orders/main.html', {'object_list': qs, 'qs_today': qs_today})
+    paginator = Paginator(qs, 9)
+    page_number = request.GET.get('page')
+    page_obj = paginator.get_page(page_number)
+    return render(request, 'orders/main.html', {'object_list': qs, 'qs_today': qs_today, 'page_obj': page_obj})
 
 class OrderDetailView(LoginRequiredMixin, DetailView):
     model = Order
@@ -157,15 +161,21 @@ def order_new(request):
         boxdb = request.POST.get('boxdb', '')
         profile = Profile.objects.get(user=request.user)
 
-        print("Comments: ", comments)
-        print("post data", data)
+        # print("Comments: ", comments)
+        # print("post data", data)
         order = Order(customer=profile)
         order.save()
 
-        for key, comment in zip(sorted(list(data.keys())), sorted(list(comments.keys()))):
+        comments_cleard = {}
+        for key in comments.keys():
+            key_cleard = key.split('_')[0]
+            comments_cleard[key_cleard] = comments[key]
+
+        for key, comment in zip(sorted(list(data.keys())), sorted(list(comments_cleard.keys()))):
+            # print("kulcs: ", key, " érték: ", comment)
             obj = get_object_or_404(Meal, pk=int(key))
             db = int(data[key])
-            comment_string = comments[comment]
+            comment_string = comments_cleard[comment]
             pos = Position.objects.create(meal=obj, quantity=db, comment=comment_string)
             pos.save()
             order.positions.add(pos)

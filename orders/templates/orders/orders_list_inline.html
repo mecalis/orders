@@ -4,9 +4,9 @@
     </div>
     <div class="card mb-1 mt-1 col-sm-2 text-center">
         {% if obj.check_day == True %}
-            mai nap
+            <span class="mt-3">mai nap</span>
         {% else %}
-            {{ obj.get_created_day }}
+        <span class="mt-3">{{ obj.get_created_day }}</span>
         {% endif %}
     </div>
     <div class="card mb-1 mt-1 col-sm-5 ">
