@@ -32,7 +32,7 @@ class Position(models.Model):
         if self.comment == '':
             return f"{self.meal.name}"
         else:
-            return f"{self.meal.name}-{self.comment[:20]}"
+            return f"{self.meal.name} - {self.comment[:20]}"
 
 class Order(models.Model):
     transacton_id = models.CharField(max_length=16, blank=True)

@@ -32,8 +32,7 @@ from django.http import HttpResponse
 from django.template.loader import get_template
 from xhtml2pdf import pisa
 
-#Vágólap
-import pyperclip
+
 
 # Create your views here.
 
@@ -212,6 +211,7 @@ def queries_view(request):
                     obj = {
                         'position_id': pos.id,
                         'meal': pos.meal.name,
+                        'meal_full': pos.meal.full_name(),
                         'meal_commented': pos.full_name(),
                         'quantity:': pos.quantity,
                         'price': pos.price,
@@ -221,6 +221,7 @@ def queries_view(request):
 
             positions_df = pd.DataFrame(positions_data)
             positions_df['meal'] = positions_df['meal_commented'].apply(lambda x: str(x))
+            positions_df['meal_full'] = positions_df['meal_full'].apply(lambda x: str(x))
             merged_df = pd.merge(order_df, positions_df, on='orders_id')
             df_meals = positions_df.groupby('meal', as_index=False)['quantity:'].agg('sum')
 
@@ -231,7 +232,7 @@ def queries_view(request):
             source_orders = ColumnDataSource(order_df)
             columns = [
                 TableColumn(field="orders_id", title="ID",  width=15),
-                TableColumn(field="transacton_id", title="tranzakció száma",  width=250),
+                # TableColumn(field="transacton_id", title="tranzakció száma",  width=250),
                 TableColumn(field="total_price", title="teljes összeg", width=150),
                 TableColumn(field="ordered by", title="megrendelő", width=150),
                 TableColumn(field="paid", title="kifizetve", width=80),
@@ -243,7 +244,7 @@ def queries_view(request):
             source_positions = ColumnDataSource(positions_df)
             columns = [
                 TableColumn(field="position_id", title="pozíció ID", width=15),
-                TableColumn(field="meal", title="étel"),
+                TableColumn(field="meal_full", title="étel"),
                 TableColumn(field="quantity:", title="mennyiség", width=120),
                 TableColumn(field="price", title="ár", width=120),
                 TableColumn(field="orders_id", title="rendelés ID"),
@@ -253,14 +254,14 @@ def queries_view(request):
             source_merged = ColumnDataSource(merged_df)
             columns = [
                 TableColumn(field="orders_id", title="ID", width=15),
-                TableColumn(field="transacton_id", title="tranzakció száma", width=280),
+                # TableColumn(field="transacton_id", title="tranzakció száma", width=280),
                 TableColumn(field="total_price", title="teljes összeg", width=150),
                 TableColumn(field="ordered by", title="megrendelő"),
                 TableColumn(field="paid", title="kifizetve", width=80),
                 TableColumn(field="created", title="készítve", width=170),
                 TableColumn(field="updated", title="módosítva"),
                 TableColumn(field="position_id", title="pozíció ID", width=150),
-                TableColumn(field="meal", title="étel"),
+                TableColumn(field="meal_full", title="étel"),
                 TableColumn(field="quantity:", title="mennyiség", width=120),
                 TableColumn(field="price", title="ár", width=120),
             ]
@@ -331,14 +332,6 @@ def queries_view(request):
                 row = f"{str(df_meals.iloc[i, 1])}x - {str(df_meals.iloc[i, 0])}"
                 meals.append(row)
                 # print(row)
-
-            meals_to_clipboard = ""
-            for row in meals:
-                meals_to_clipboard += row + '\n'
-            print(meals_to_clipboard)
-
-            pyperclip.copy(meals_to_clipboard)
-            s = pyperclip.paste()
 
             order_df = order_df.to_html()
             merged_df = merged_df.to_html()
