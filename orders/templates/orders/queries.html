@@ -14,8 +14,9 @@
 <script src="https://cdn.bokeh.org/bokeh/release/bokeh-tables-2.3.2.min.js"></script>
 
 {{ script_table_meal | safe }}
-
+<script src="{% static 'orders/clipboard.min.js' %}" defer></script>
 <script src="{% static 'orders/queries.js' %}" defer></script>
+
 {% endblock scripts %}
 
 {% block title %}
@@ -32,12 +33,6 @@
             <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
           </div>
           <div id="modal-to-copy" class="modal-body">
-    <!--          <div id="order_data">-->
-    <!--              <ul id="mylist">-->
-    <!--              </ul>-->
-    <!--            <div id="meal-sum">Nincs rendelés!</div>-->
-    <!--          </div>-->
-
               {% for meal in meals %}
                 <p>{{meal}}</p>
               {% endfor %}
@@ -74,7 +69,7 @@
         <hr>
         <div class="row col-sm-8">
             <p class="col-sm-3 mt-1">Megrendelt ételek:</p>
-            <button type="button" id="show-meals" data-bs-toggle="modal" data-bs-target="#order-show-modal" class="btn btn-outline-primary col-sm-5">Ételek mutatása másolhatóan.</button>
+            <button type="button" id="show-meals" data-bs-toggle="modal" data-bs-target="#order-show-modal" class="btn btn-outline-primary col-sm-5 show-meals">Ételek mutatása másolhatóan.</button>
         </div>
         <div class="row">
             <div class="col-sm-6"> {{ div_table_meal.meals | safe }} </div>
