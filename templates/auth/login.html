@@ -23,13 +23,11 @@ login
                 <button type="submit" class="btn btn-primary mt-3">Bejelentkezés</button>
             </form>
 <!--            vagy <a class="" href="my-profile/register/">regisztráció</a>-->
-            vagy <a class="" href="{% url 'register' %}">regisztráció</a>
+            Esetleg <a class="" href="{% url 'register' %}">regisztrálnál? Katt ide!</a>
+            vagy <a class="" href="{% url 'profiles:password-reset' %}">elfelejtetted a jelszót? Katt ide!</a>
+
         </div>
-<!--        <div class="col-6">-->
-<!--            news-->
-<!--            <br>-->
-<!--            updates-->
-<!--        </div>-->
+
 
     </div>
 </div>

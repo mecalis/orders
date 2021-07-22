@@ -17,8 +17,13 @@
                 <button type="button" id="{{ obj.pk }}" class="btn btn-secondary mt-3 order-toggle">Váltás kifizetettre</button>
             {% endif %}
         {% else %}
-<!--            <span class="text-center"> {{ obj.paid }}</span>-->
-            {{ obj.paid }}
+            {% if obj.paid == True %}
+                <p class="text-center text-success mt-3"> Kifizetve </p>
+            {% else %}
+                <h4 class="text-center text-danger mt-3"> Tartozás </h4>
+            {% endif %}
+
+<!--            {{ obj.paid }}-->
         {% endif %}
     </div>
 </div>

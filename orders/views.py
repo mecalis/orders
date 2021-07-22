@@ -7,7 +7,7 @@ from .utils import get_customer_from_id, render_pdf_view
 from meals.models import Meal
 from profiles.models import Profile
 import json
-from datetime import datetime,timedelta
+from datetime import datetime, timedelta
 from datetime import date
 
 from django.http import JsonResponse
@@ -158,11 +158,12 @@ def order_new(request):
     if request.method == "POST" and request.is_ajax():
         data = json.loads(request.POST.get('data', ''))
         comments = json.loads(request.POST.get('comment', ''))
-        boxdb = request.POST.get('boxdb', '')
+        boxes = json.loads(request.POST.get('boxes', ''))
+        print("Dobozok: ",boxes)
         profile = Profile.objects.get(user=request.user)
 
-        # print("Comments: ", comments)
-        # print("post data", data)
+
+        print("post data", data)
         order = Order(customer=profile)
         order.save()
 
@@ -170,16 +171,47 @@ def order_new(request):
         for key in comments.keys():
             key_cleard = key.split('_')[0]
             comments_cleard[key_cleard] = comments[key]
+        print("Comments: ", comments_cleard)
 
-        for key, comment in zip(sorted(list(data.keys())), sorted(list(comments_cleard.keys()))):
-            # print("kulcs: ", key, " érték: ", comment)
+        for key in list(data.keys()):
+            box = 0
             obj = get_object_or_404(Meal, pk=int(key))
             db = int(data[key])
-            comment_string = comments_cleard[comment]
-            pos = Position.objects.create(meal=obj, quantity=db, comment=comment_string)
+            print("Darab ", db)
+            box_per_meal = int(boxes[key])
+            print("box_per_meal ", box_per_meal)
+
+            box = db * box_per_meal
+            print("Összes doboz:", box)
+            comment_string = comments_cleard[key]
+            pos = Position.objects.create(meal=obj, quantity=db, comment=comment_string, boxes_used=box)
             pos.save()
             order.positions.add(pos)
+
+        # for key, comment in zip(sorted(list(data.keys())), sorted(list(comments_cleard.keys()))):
+        #     # print("kulcs: ", key, " érték: ", comment)
+        #     obj = get_object_or_404(Meal, pk=int(key))
+        #     db = int(data[key])
+        #     comment_string = comments_cleard[comment]
+        #     pos = Position.objects.create(meal=obj, quantity=db, comment=comment_string, boxes_used = 0)
+        #     pos.save()
+        #     order.positions.add(pos)
         return JsonResponse({'msg': 'beírva'})
+
+@login_required
+def statistics(request):
+
+    # Összes tartozás
+    # Összes költés a megadott időtartamban
+    profile = Profile.objects.get(user=request.user)
+    qs = Order.objects.filter(customer = profile)
+    last_month_qs = qs
+
+    context = {
+        "profile": profile
+
+    }
+    return render(request, 'orders/statistics.html', context)
 
 
 @login_required

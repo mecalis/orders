@@ -19,6 +19,7 @@ var order_data = document.getElementById('order_data');
 let order_sum = 0
 let data = {};
 let boxdb = 0
+let boxes = {}
 make_orderBtn.addEventListener('click', ()=>{
     console.log('Rendelés véglegesítése megnyomva!!');
 
@@ -34,6 +35,7 @@ make_orderBtn.addEventListener('click', ()=>{
     order_sum = 0
     data = {}
     boxdb = 0
+    boxes = {}
 
     var elements = document.getElementsByClassName('meal_inline');
 
@@ -70,6 +72,7 @@ make_orderBtn.addEventListener('click', ()=>{
                 // HA VAN DARABSZÁM, DATA és a LISTA feltöltése
                 if (element_meal_db_input_val > 0) {
                     data[element_meal_db_input_id]=element_meal_db_input_val;
+                    boxes[element_meal_db_input_id] = boxdb
                     var meal_price = parseInt(element.getElementsByClassName('meal_price')[0].innerHTML);
                     var node = document.createElement("LI");
                     var textnode = document.createTextNode("ID: "+element_meal_db_input_id+" név: "+ element_meal_label_value+ " - " + element_meal_db_input_val+ " db"+" + " + element_meal_db_input_val*checkedValue + " Ft");
@@ -122,11 +125,12 @@ orderBtn.addEventListener('click', e=>{
             console.log('Megrendelem! megnyomva!');
             console.log(data)
             console.log('submit')
+            console.log(boxes)
             const formData = new FormData()
             formData.append('csrfmiddlewaretoken', csrf);
             formData.append('data', JSON.stringify(data));
             formData.append('comment', JSON.stringify(order_comments));
-            formData.append('boxdb', boxdb);
+            formData.append('boxes', JSON.stringify(boxes));
             $('#order-modal').modal('hide')
             $.ajax({
                 type: 'POST',

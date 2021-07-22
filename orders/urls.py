@@ -10,6 +10,7 @@ from .views import (
     order_toggle_view,
     order_delete_view,
     render_pdf_view,
+    statistics,
 
 )
 
@@ -25,5 +26,6 @@ urlpatterns = [
     path('order-toggle/', order_toggle_view, name='order_toggle'),
     path('orders/<pk>/delete', order_delete_view, name='order_delete'),
     path('orders-pdf/', render_pdf_view, name='pdf'),
+    path('statistics/', statistics, name='statistics'),
 
 ]

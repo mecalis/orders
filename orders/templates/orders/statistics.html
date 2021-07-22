@@ -1,0 +1,29 @@
+{% extends "base.html" %}
+{% load static %}
+{% load crispy_forms_tags %}
+
+{% block scripts %}
+<!--<script src="{% static 'orders/home.js' %}" defer></script>-->
+<link href="https://cdn.bokeh.org/bokeh/release/bokeh-2.3.2.min.css" rel="stylesheet" type="text/css">
+<link href="https://cdn.bokeh.org/bokeh/release/bokeh-widgets-2.3.2.min.css" rel="stylesheet" type="text/css">
+<link href="https://cdn.bokeh.org/bokeh/release/bokeh-tables-2.3.2.min.css" rel="stylesheet" type="text/css">
+
+
+<script src="https://cdn.bokeh.org/bokeh/release/bokeh-2.3.2.min.js"></script>
+<script src="https://cdn.bokeh.org/bokeh/release/bokeh-widgets-2.3.2.min.js"></script>
+<script src="https://cdn.bokeh.org/bokeh/release/bokeh-tables-2.3.2.min.js"></script>
+
+{{ script_table_meal | safe }}
+<script src="{% static 'orders/clipboard.min.js' %}" defer></script>
+<script src="{% static 'orders/queries.js' %}" defer></script>
+
+{% endblock scripts %}
+
+{% block title %}
+    Saját statisztikák
+{% endblock title %}
+
+{% block content %}
+Saját statisztikáim ({{profile}}):
+
+{% endblock content %}

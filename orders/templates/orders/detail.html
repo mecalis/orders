@@ -18,7 +18,7 @@
                 <li>Rendelt ételek:</li>
                 <ul>
                     {% for list_item in list %}
-                        <li><b>{{ list_item}} </b> </li>
+                        <li><b>{{ list_item }} </b> {% if list_item.comment %} ({{list_item.comment}}) {% endif %} </li>
                     {% endfor %}
                 </ul>
 

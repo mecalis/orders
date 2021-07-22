@@ -14,9 +14,10 @@ class Position(models.Model):
     created = models.DateTimeField(blank=True)
     # updated = models.DateTimeField(auto_now=True)
     comment = models.CharField(max_length=120, blank=True, default='')
+    boxes_used = models.IntegerField(blank=True, default=0)
 
     def save(self, *args, **kwargs):
-        self.price = self.meal.price * self.quantity
+        self.price = (self.meal.price + self.boxes_used*50) * self.quantity
         if self.created == None:
             self.created = timezone.now()
         return super().save(*args, **kwargs)
@@ -26,13 +27,13 @@ class Position(models.Model):
         return order_obj.id
 
     def __str__(self):
-        return f"id: {self.id}, product: {self.meal.name}, quantity: {self.quantity}"
+        return f"id: {self.id}, megnevezés: {self.meal.name}, mennyiség: {self.quantity}, dobozok: {self.boxes_used} db"
 
     def full_name(self):
         if self.comment == '':
             return f"{self.meal.name}"
         else:
-            return f"{self.meal.name} - {self.comment[:20]}"
+            return f"{self.meal.name} - {self.comment[:30]}"
 
 class Order(models.Model):
     transacton_id = models.CharField(max_length=16, blank=True)

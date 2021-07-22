@@ -17,9 +17,9 @@ class ProfileForm(forms.ModelForm):
         exclude = ('user', 'email_confirmed')
 
 class SignUpForm(UserCreationForm):
-    username = forms.CharField(max_length=254, help_text='Felhasználói név.', label='Név:')
+    username = forms.CharField(max_length=254, label='Felhasználó név:')
     email = forms.EmailField(max_length=254, help_text='Szükséges. Valós e-mail címet adj meg!', label='E-mail cím:')
-    password1 = forms.CharField(widget=forms.PasswordInput, help_text='Biztonságos jelszót adj meg!.', label='Jelszó:')
+    password1 = forms.CharField(widget=forms.PasswordInput, label='Jelszó:')
     password2 = forms.CharField(widget=forms.PasswordInput, label='Jelszó ellenőrzése:')
 
     class Meta:

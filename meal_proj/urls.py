@@ -20,6 +20,7 @@ from django.conf.urls.static import static
 from .views import login_view, logout_view
 from profiles.views import UserFormView
 from profiles.views import signup, activate, account_activation_sent
+from django.contrib.auth.views import PasswordResetConfirmView
 
 
 urlpatterns = [
@@ -36,6 +37,7 @@ urlpatterns = [
     path(r'^account_activation_sent/$', account_activation_sent, name='account_activation_sent'),
     path(r'^activate/(?P<uidb64>[0-9A-Za-z_\-]+)/(?P<token>[0-9A-Za-z]{1,13}-[0-9A-Za-z]{1,20})/$',
         activate, name='activate'),
+
 ]
 
 urlpatterns += static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
