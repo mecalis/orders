@@ -17,7 +17,9 @@ class Position(models.Model):
     boxes_used = models.IntegerField(blank=True, default=0)
 
     def save(self, *args, **kwargs):
-        self.price = (self.meal.price + self.boxes_used*50) * self.quantity
+        self.price = self.meal.price * self.quantity + self.boxes_used*50
+        # print(f"price {self.price} = ({self.meal.price} + {self.boxes_used}*50) * {self.quantity}")
+        # self.price = self.meal.price * self.quantity + self.boxes_used * 50 *  self.quantity
         if self.created == None:
             self.created = timezone.now()
         return super().save(*args, **kwargs)
@@ -27,7 +29,7 @@ class Position(models.Model):
         return order_obj.id
 
     def __str__(self):
-        return f"id: {self.id}, megnevezés: {self.meal.name}, mennyiség: {self.quantity}, dobozok: {self.boxes_used} db"
+        return f"id: {self.id}, megnevezés: {self.meal.name}, mennyiség: {self.quantity}, dobozok: {self.boxes_used} db -> {self.price}"
 
     def full_name(self):
         if self.comment == '':

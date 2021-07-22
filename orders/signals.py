@@ -11,4 +11,5 @@ def calculate_total_price(sender, instance, action, **kwargs):
         for item in instance.get_positions():
             total_price += item.price
     instance.total_price = total_price
+    print(total_price)
     instance.save()

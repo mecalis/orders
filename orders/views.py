@@ -159,11 +159,11 @@ def order_new(request):
         data = json.loads(request.POST.get('data', ''))
         comments = json.loads(request.POST.get('comment', ''))
         boxes = json.loads(request.POST.get('boxes', ''))
-        print("Dobozok: ",boxes)
+        # print("Dobozok: ",boxes)
         profile = Profile.objects.get(user=request.user)
 
 
-        print("post data", data)
+        # print("post data", data)
         order = Order(customer=profile)
         order.save()
 
@@ -171,18 +171,18 @@ def order_new(request):
         for key in comments.keys():
             key_cleard = key.split('_')[0]
             comments_cleard[key_cleard] = comments[key]
-        print("Comments: ", comments_cleard)
+        # print("Comments: ", comments_cleard)
 
         for key in list(data.keys()):
             box = 0
             obj = get_object_or_404(Meal, pk=int(key))
             db = int(data[key])
-            print("Darab ", db)
+            # print("Darab ", db)
             box_per_meal = int(boxes[key])
-            print("box_per_meal ", box_per_meal)
+            # print("box_per_meal ", box_per_meal)
 
             box = db * box_per_meal
-            print("Összes doboz:", box)
+            # print("Összes doboz:", box)
             comment_string = comments_cleard[key]
             pos = Position.objects.create(meal=obj, quantity=db, comment=comment_string, boxes_used=box)
             pos.save()
@@ -328,7 +328,7 @@ def queries_view(request):
 
             }
 
-            if df_pie.shape[0] >2:
+            if df_pie.shape[0] >2 and df_pie.shape[0]<20:
                 df_pie['angle'] = df_pie['quantity:'] / df_pie['quantity:'].sum() * 2 * pi
                 df_pie['meal'] = df_pie['meal'].apply(lambda x: str(x))
                 # print(df_pie)
