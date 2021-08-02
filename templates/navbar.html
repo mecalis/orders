@@ -1,5 +1,9 @@
 {% load static %}
 
+{% block scripts %}
+<script src="{% static 'navbar.js' %}" defer></script>
+{% endblock scripts %}
+
 {% url 'orders:home' as path_to_home %}
 {% url 'orders:list' as path_to_orders %}
 {% url 'profiles:my' as path_to_myprofile %}
@@ -7,6 +11,8 @@
 {% url 'logout' as path_to_logout %}
 {% url 'meals:meal_new' as path_to_meal_new %}
 {% url 'orders:queries_view' as path_to_queries_view %}
+{% url 'classifier:classifier-home' as path_to_classifier %}
+{% url 'blog:blog-home' as path_to_blog %}
 
 <nav class="navbar navbar-expand-lg navbar-light bg-light">
   <div class="container-fluid">
@@ -27,11 +33,26 @@
         <li class="nav-item">
           <a class="nav-link {% if request.path == path_to_queries_view %} active {% endif %}" href="{{path_to_queries_view}}">Lekérdezések</a>
         </li>
+<!--        <li class="nav-item">-->
+<!--          <a class="nav-link {% if request.path == path_to_meals %} active {% endif %}" href="{{path_to_meals}}">Fogások</a>-->
+<!--        </li>-->
+<!--        <li class="nav-item">-->
+<!--          <a class="nav-link {% if request.path == path_to_meal_new %} active {% endif %}" href="{{path_to_meal_new}}">Új fogás felvétele</a>-->
+<!--        </li>-->
         <li class="nav-item">
-          <a class="nav-link {% if request.path == path_to_meals %} active {% endif %}" href="{{path_to_meals}}">Fogások</a>
+          <div class="nav-item dropdown ">
+            <div class="nav-link dropdown-toggle col-4" id="navbarDropdownMenuLink2" role="button" data-bs-toggle="dropdown" aria-expanded="false">
+              Fogások kezelése
+            </div>
+            <ul class="dropdown-menu" aria-labelledby="navbarDropdownMenuLink2">
+              <li><a class="nav-link {% if request.path == path_to_meals %} active {% endif %}" href="{{path_to_meals}}">Fogások listája</a></li>
+              <li><a class="nav-link {% if request.path == path_to_meal_new %} active {% endif %}" href="{{path_to_meal_new}}">Új fogás felvétele kézzel</a></li>
+              <li><a class="nav-link {% if request.path == path_to_classifier %} active {% endif %}" href="{{path_to_classifier}}">Új fogás felvétele OCR-el</a></li>
+            </ul>
+          </div>
         </li>
         <li class="nav-item">
-          <a class="nav-link {% if request.path == path_to_meal_new %} active {% endif %}" href="{{path_to_meal_new}}">Új fogás felvétele</a>
+          <a class="nav-link {% if request.path == path_to_blog %} active {% endif %}" href="{{path_to_blog}}">Hírek és üzenetek <span id="counter"></span></a>
         </li>
 <!--        <li class="nav-item">-->
 <!--          <a class="nav-link" href="">Ételek karbantartása</a>-->

@@ -25,5 +25,18 @@
     font-style: italic;
 }
 
+.center {
+  text-align: center;
+
+}
+
+.nav {
+  display:table;
+}
+.nav > li{
+  width: auto;
+  display:table-cell;
+}
+
 
 

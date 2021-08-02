@@ -1,4 +1,4 @@
-<div class="row">
+<div class="row mx-auto justify-content-center">
     <div class="card mb-1 mt-1 col-sm-4">
         <a href="{{ obj.get_absolute_url }}" class="card-body"> {{ obj }} </a>
     </div>
@@ -9,18 +9,18 @@
         <span class="mt-3">{{ obj.get_created_day }}</span>
         {% endif %}
     </div>
-    <div class="card mb-1 mt-1 col-sm-5 ">
+    <div class="card mb-1 mt-1 col-sm-5 align-middle">
         {% if request.user.is_staff %}
             {% if obj.paid == True %}
-                <button type="button" id="{{ obj.pk }}" class="btn btn-success mt-3 order-toggle">Mégsem</button>
+                <button type="button" id="{{ obj.pk }}" class="btn btn-success mt-2 order-toggle">Mégsem</button>
             {% else %}
-                <button type="button" id="{{ obj.pk }}" class="btn btn-secondary mt-3 order-toggle">Váltás kifizetettre</button>
+                <button type="button" id="{{ obj.pk }}" class="btn btn-secondary mt-2 order-toggle">Váltás kifizetettre</button>
             {% endif %}
         {% else %}
             {% if obj.paid == True %}
-                <p class="text-center text-success mt-3"> Kifizetve </p>
+                <p class="text-center text-success mt-2"> Kifizetve </p>
             {% else %}
-                <h4 class="text-center text-danger mt-3"> Tartozás </h4>
+                <h4 class="text-center text-danger mt-2"> Tartozás </h4>
             {% endif %}
 
 <!--            {{ obj.paid }}-->

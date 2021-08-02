@@ -10,6 +10,8 @@ class Profile(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     updated = models.DateTimeField(auto_now=True)
     email_confirmed = models.BooleanField(default=False)
+    # last_post_seen = models.DateTimeField(auto_now=False, auto_now_add=False, null=True, blank=True)
+    last_post_id = models.IntegerField(default=0, blank=True)
 
     def __str__(self):
         # return f"Profile of {self.user.username}"

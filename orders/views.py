@@ -188,14 +188,6 @@ def order_new(request):
             pos.save()
             order.positions.add(pos)
 
-        # for key, comment in zip(sorted(list(data.keys())), sorted(list(comments_cleard.keys()))):
-        #     # print("kulcs: ", key, " érték: ", comment)
-        #     obj = get_object_or_404(Meal, pk=int(key))
-        #     db = int(data[key])
-        #     comment_string = comments_cleard[comment]
-        #     pos = Position.objects.create(meal=obj, quantity=db, comment=comment_string, boxes_used = 0)
-        #     pos.save()
-        #     order.positions.add(pos)
         return JsonResponse({'msg': 'beírva'})
 
 @login_required

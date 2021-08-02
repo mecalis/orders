@@ -22,13 +22,14 @@ from profiles.views import UserFormView
 from profiles.views import signup, activate, account_activation_sent
 from django.contrib.auth.views import PasswordResetConfirmView
 
-
 urlpatterns = [
     path('', include('orders.urls', namespace='orders')),
+    path('classifier/', include('classifier.urls', namespace='classifier')),
     path('admin/', admin.site.urls),
 
     path('my-profile/', include('profiles.urls', namespace='profiles')),
     path('meals/', include('meals.urls', namespace='meals')),
+    path('blog/', include('blog.urls', namespace='blog')),
     path('login/', login_view, name='login'),
     path('logout/', logout_view, name='logout'),
     # path('register/', UserFormView.as_view(), name='register'),

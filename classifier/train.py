@@ -68,4 +68,6 @@ print('Model betanítása:')
 model.fit(data, target)
 print('Betanítás kész!')
 
-joblib.dump(model, 'model')
+joblib.dump(model, 'model.save')
+import pickle
+pickle.dump(model,open("model2.sav", "wb"))

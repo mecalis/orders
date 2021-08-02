@@ -14,7 +14,7 @@ class UserForm(forms.ModelForm):
 class ProfileForm(forms.ModelForm):
     class Meta:
         model = Profile
-        exclude = ('user', 'email_confirmed')
+        exclude = ('user', 'email_confirmed', 'last_post_id')
 
 class SignUpForm(UserCreationForm):
     username = forms.CharField(max_length=254, label='Felhasználó név:')

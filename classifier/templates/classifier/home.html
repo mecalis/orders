@@ -1,0 +1,68 @@
+{% extends "base.html" %}
+{% load static %}
+
+{% block scripts %}
+<script src="{% static 'classifier/main.js' %}" defer></script>
+{% endblock scripts %}
+
+{% block title %}
+classifier home
+{% endblock title %}
+
+{% block content %}
+<a href="#top" ></a>
+<div id="alert-box"></div>
+<hr>
+<h3>Automata OCR a Margaréta facebook oldaláról.</h3>
+<p id="btn-holder">
+  <button class="btn btn-primary search_btn" id="search_btn">Keresés</button>
+</p>
+<div id="alert-box"></div>
+<div id="meal_data" class="container">
+  <form id="meal_data_form">
+    {% csrf_token %}
+    <div class="row">
+      <div class="col-sm-2 center">Típus</div>
+      <div class="col-sm-4 center" style="text-align: center;">Megnevezés</div>
+      <div class="col-sm-1 center" style="text-align: center;">Ár</div>
+    </div>
+    <hr>
+    <div id="HETFO">
+        <div class="row"><h3 class="">Hétfő</h3> <div class="date">Dátum</div></div>
+        {% include 'classifier/heti_menu_inline.html' %}
+    </div>
+    <hr>
+    <div id="KEDD">
+        <div class="row"><h3 class="">Kedd</h3> <div class="date">Dátum</div></div>
+        {% include 'classifier/heti_menu_inline.html' %}
+    </div>
+      <hr>
+    <div id="SZERDA">
+        <div class="row"><h3 class="">Szerda</h3> <div class="date">Dátum</div></div>
+        {% include 'classifier/heti_menu_inline.html' %}
+    </div>
+      <hr>
+    <div id="CSÜTÖRTÖK">
+        <div class="row"><h3 class="">Csütörtök</h3> <div class="date">Dátum</div></div>
+        {% include 'classifier/heti_menu_inline.html' %}
+    </div>
+      <hr>
+    <div id="PÉNTEK">
+        <div class="row"><h3 class="">Péntek</h3> <div class="date">Dátum</div></div>
+        {% include 'classifier/heti_menu_inline.html' %}
+    </div>
+      <hr>
+    <div id="SZOMBAT">
+        <div class="row"><h3 class="">Szombat</h3> <div class="date">Dátum</div></div>
+        {% include 'classifier/heti_menu_inline.html' %}
+    </div>
+    <hr>
+    <div class="row" id="mehet-button-div">
+      <button type="button" id="mehet" class="btn btn-danger mehet">Feltöltés az adatbázisba</button>
+    </div>
+  </form>
+</div>
+
+
+
+{% endblock content %}

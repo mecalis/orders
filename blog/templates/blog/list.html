@@ -1,0 +1,25 @@
+{% extends "base.html" %}
+
+
+{% block content %}
+
+
+        <div class='row'>
+            {% if request.user.is_authenticated %}
+                {% if request.user.is_staff %}
+                    <div class="col-12 col-md-10 mb-3 mx-auto">
+                        <a href='blog-new/'>Új üzenet írása</a>
+                    </div>
+                {% endif %}
+            {% endif %}
+            {% for object in object_list %}
+                {% include 'blog/list-inline.html' with blog_post=object truncate=True detail=False new=True %}
+            {% endfor %}
+            {% for object in object_list_old %}
+                {% include 'blog/list-inline.html' with blog_post=object truncate=True detail=False new=False %}
+            {% endfor %}
+        </div>
+
+
+
+{% endblock %}

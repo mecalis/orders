@@ -47,7 +47,7 @@ home
 <!--    <button type="submit" class="btn btn-primary mt-3">Keresés</button>-->
 <!--</form>-->
 
-<br>
+
 {% if order_df %}
     Rendelések(orders_df):
     {{ order_df|safe }}
@@ -67,7 +67,7 @@ home
 <!--    <h3>No data</h3>-->
 {% endif %}
 <div id="alert-box"></div>
-<button type="button" id="make-order" data-bs-toggle="modal" data-bs-target="#order-modal" class="btn btn-primary mt-3">Rendelés véglegesítése</button>
+<button type="button" id="make-order" data-bs-toggle="modal" data-bs-target="#order-modal" class="btn btn-primary ">Rendelés véglegesítése</button>
 <hr>
 <form id="order_form">
     {% csrf_token %}
