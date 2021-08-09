@@ -38,5 +38,24 @@
   display:table-cell;
 }
 
+.responsive_image {
+  width: 100%;
+  max-hight: 200px;
+
+}
+
+.container_for_image {
+  position: relative;
+  text-align: center;
+  color: white;
+}
+
+.centered_text {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  transform: translate(-50%, -50%);
+}
+
 
 

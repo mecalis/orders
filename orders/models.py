@@ -7,6 +7,8 @@ from django.shortcuts import reverse
 from datetime import date
 import datetime
 
+
+
 class Position(models.Model):
     meal = models.ForeignKey(Meal, on_delete=models.CASCADE)
     quantity = models.PositiveIntegerField()

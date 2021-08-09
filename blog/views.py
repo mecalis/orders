@@ -27,15 +27,16 @@ def blog_post_list_view(request):
     # list out objects 
     # could be search
     profile = Profile.objects.get(user=request.user)
-    qs_new = BlogPost.objects.filter(id__gt=profile.last_post_id)
-    qs_old = BlogPost.objects.filter(id__lte=profile.last_post_id)
+    qs_new = BlogPost.objects.filter(id__gt=profile.last_post_id).order_by('-id')
+    qs_old = BlogPost.objects.filter(id__lte=profile.last_post_id).order_by('-id')
     # print('Eddig id:', profile.last_post_id)
     # print('új post db, ',len(qs_new))
     # print('régi post db, ',len(qs_old))
-    qs = BlogPost.objects.first()
+    qs = BlogPost.objects.last()
     # print(qs.id)
-    profile.last_post_id = qs.id
-    profile.save()
+    if qs:
+        profile.last_post_id = qs.id
+        profile.save()
     # print('Most:', profile.last_post_id)
 
     template_name = 'blog/list.html'

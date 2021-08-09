@@ -111,7 +111,7 @@ def extract_day_roi(image, path, counter, ROI_name_list):
         # extract the OCR text itself along with the confidence of the
         # text localization
         text = results["text"][i]
-        conf = int(results["conf"][i])
+        conf = int(results["conf"][i].split('.')[0])
         if text in ROI_name_list:
             # print(text)
             ROI[text] = {'x': x, 'y': y, 'w': w, 'h':h}
@@ -215,7 +215,7 @@ def get_images_from_facebook(only_one = True, save = False):
     path = os.path.join(path, "FB_SCRAPED")
     # # create the directory
     # os.mkdir(path)
-    ROI_name_list = ['HETFO:', 'KEDD:', 'SZERDA:', 'CSÜTÖRTÖK:', 'PÉNTEK:', 'SZOMBAT:']
+    ROI_name_list = ['HETFO:', 'KEDD:', 'SZERDA:', 'CSÜTÖRTÖK:', 'PENTEK:', 'SZOMBAT:']
     counter = 0
     images_from_facebook = []
 
@@ -264,7 +264,7 @@ def extract_data_from_image(image):
     :param image: heti menü
     :return: dict
     '''
-    ROI_name_list = ['HETFO:', 'KEDD:', 'SZERDA:','CSÜTÖRTÖK:','PÉNTEK:','SZOMBAT:']
+    ROI_name_list = ['HETFO:', 'KEDD:', 'SZERDA:','CSÜTÖRTÖK:','PENTEK:','SZOMBAT:']
     # cv2.imshow("Image", image)
     # cv2.waitKey(0)
     path = os.getcwd()

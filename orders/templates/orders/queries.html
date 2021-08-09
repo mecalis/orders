@@ -65,11 +65,22 @@
 
 <!--    <br>-->
     {% if order_df %}
+        {% if tartozasok %}
+        <hr>
+        <div>
+            <p>Statisztikáim:</p>
+            <p>A keresett időszakban a tartozásaim összege: {{tartozasok}}Ft </p>
+            {{ div_table_meal.bar | safe }}
+        </div>
+
+        {% endif %}
 
         <hr>
-        <div class="row col-sm-8">
-            <p class="col-sm-3 mt-1">Megrendelt ételek:</p>
-            <button type="button" id="show-meals" data-bs-toggle="modal" data-bs-target="#order-show-modal" class="btn btn-outline-primary col-sm-5 show-meals">Ételek mutatása másolhatóan.</button>
+        <p class="mt-1 col-5"> A keresett időszakban a rendelések összege: {{sum}} Ft</p>
+        <div class="row col-12">
+            <p class="col-sm-2 mt-1">Megrendelt ételek:</p>
+            <button type="button" id="show-meals" data-bs-toggle="modal" data-bs-target="#order-show-modal" class="btn btn-outline-primary col-sm-3 show-meals">Ételek mutatása másolhatóan.</button>
+
         </div>
         <div class="row">
             <div class="col-sm-6"> {{ div_table_meal.meals | safe }} </div>

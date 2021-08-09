@@ -1,6 +1,7 @@
 from django.urls import path
 from .views import (
     home_view,
+    home_view2,
     OrderListView,
     OrderDetailView,
     order_list_view,
@@ -18,6 +19,7 @@ app_name = 'orders'
 
 urlpatterns = [
     path('', home_view, name='home'),
+    path('home2/', home_view2, name='home2'),
     path('orders/', order_list_view, name='list'),
 
     path('orders/<pk>/', order_detail_view, name='detail'),

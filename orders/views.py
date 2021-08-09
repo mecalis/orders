@@ -126,6 +126,95 @@ def home_view(request):
     }
     return render(request, 'orders/home.html', context)
 
+def home_view2(request):
+    form = OrdersSearchForm(request.POST or None)
+    order_df = None
+    positions_df = None
+    merged_df = None
+    df_meals = None
+
+    napi_qs = []
+    allando_qs = []
+
+    napi_qs = Meal.objects.filter(type='2', day = datetime.now())
+    allando_qs = Meal.objects.filter(type='1')
+    egyeb_qs = Meal.objects.filter(type='4')
+    napi_tablas_qs = Meal.objects.filter(type='3', day = datetime.now())
+
+    if request.method == 'POST':
+        date_from = request.POST.get('date_from')
+        date_to = request.POST.get('date_to')
+        qs = Order.objects.filter(created__date__lte=date_to, created__date__gte = date_from)
+        # print(qs.query)
+        if len(qs) > 0:
+            order_df = pd.DataFrame(qs.values())
+            order_df['customer_id'] = order_df['customer_id'].apply(get_customer_from_id)
+            order_df['created'] = order_df['created'].apply(lambda x: x.strftime('%Y-%m-%d'))
+            order_df.rename({'customer_id': 'ordered by', 'id': 'orders_id'}, axis=1, inplace=True)
+
+
+            positions_data = []
+            for order in qs:
+                for pos in order.get_positions():
+                    obj = {
+                        'position_id': pos.id,
+                        'meal': pos.meal.name,
+                        'quantity:': pos.quantity,
+                        'price': pos.price,
+                        'orders_id': pos.get_orders_id(),
+                    }
+                    positions_data.append(obj)
+
+            positions_df = pd.DataFrame(positions_data)
+
+            merged_df = pd.merge(order_df, positions_df, on='orders_id')
+            # print(' +++++++ Merged DF ++++++++')
+            # print(merged_df.columns)
+            # print(merged_df)
+
+            df_meals = positions_df.groupby('meal', as_index=False)['quantity:'].agg('sum')
+            # print(df_meals)
+            # merged_df_sliced = merged_df[['position_id','meal','quantity:', 'price']]
+            # print(merged_df_sliced)
+            # df = merged_df_sliced.groupby('position_id', as_index=False)['quantity:'].agg('sum')
+            #
+            # print('Összes position summa:')
+            # print(df)
+            #
+            order_df = order_df.to_html()
+            merged_df = merged_df.to_html()
+            positions_df = positions_df.to_html()
+            df_meals = df_meals.to_html()
+
+            # df_pos = merged_df.groupby('ordered by', as_index=False)['price'].agg('sum')
+            # df_pos_html = df.to_html()
+            # print('GROUP')
+            # print(df_pos)
+
+            # df_user = merged_df.groupby('ordered by', as_index=False)['price'].agg('sum')
+            # print(df_user)
+
+
+        else:
+            print('No data')
+
+    context = {
+        'form' : form,
+        'order_df': order_df,
+        'positions_df': positions_df,
+        'merged_df': merged_df,
+        'df_meals': df_meals,
+        'allando_qs': allando_qs,
+        'napi_qs': napi_qs,
+        'egyeb_qs': egyeb_qs,
+        'napi_tablas_qs': napi_tablas_qs,
+        # 'df_user': df_user,
+        # 'df_pos': df_pos_html,
+    }
+    return render(request, 'orders/home2.html', context)
+
+
+
 class OrderListView(LoginRequiredMixin, ListView):
     model = Order
     paginate_by = 2
@@ -196,7 +285,9 @@ def statistics(request):
     # Összes tartozás
     # Összes költés a megadott időtartamban
     profile = Profile.objects.get(user=request.user)
-    qs = Order.objects.filter(customer = profile)
+    qs = Order.objects.filter(customer = profile).order_by('-created')
+    qs_not_payed = qs.filter(paid = False)
+    last_month = date.now().strftime('%Y-%M-%d')
     last_month_qs = qs
 
     context = {
@@ -216,8 +307,10 @@ def queries_view(request):
     script_table_meal = None
     div_table_meal = None
     script_table_orders = None
+    sum = None
     div_table_orders = None
     meals = None
+    tartozasok = None
     context = {}
 
     if request.method == 'POST':
@@ -268,11 +361,11 @@ def queries_view(request):
             columns = [
                 TableColumn(field="orders_id", title="ID",  width=15),
                 # TableColumn(field="transacton_id", title="tranzakció száma",  width=250),
-                TableColumn(field="total_price", title="teljes összeg", width=150),
-                TableColumn(field="ordered by", title="megrendelő", width=150),
-                TableColumn(field="paid", title="kifizetve", width=80),
-                TableColumn(field="created", title="készítve", width=170),
-                TableColumn(field="updated", title="módosítva"),
+                TableColumn(field="total_price", title="teljes összeg", width=90),
+                TableColumn(field="ordered by", title="megrendelő", width=100),
+                TableColumn(field="paid", title="kifizetve", width=60),
+                TableColumn(field="created", title="készítve", width=60),
+                TableColumn(field="updated", title="módosítva", width=100),
             ]
             data_table_orders = DataTable(source=source_orders, columns=columns, width=800, height=400)
 
@@ -281,7 +374,7 @@ def queries_view(request):
                 TableColumn(field="position_id", title="pozíció ID", width=15),
                 TableColumn(field="meal_full", title="étel"),
                 TableColumn(field="quantity:", title="mennyiség", width=120),
-                TableColumn(field="price", title="ár", width=120),
+                TableColumn(field="price", title="ár", width=90),
                 TableColumn(field="orders_id", title="rendelés ID"),
             ]
             data_table_positions = DataTable(source=source_positions, columns=columns, width=800, )
@@ -290,15 +383,15 @@ def queries_view(request):
             columns = [
                 TableColumn(field="orders_id", title="ID", width=15),
                 # TableColumn(field="transacton_id", title="tranzakció száma", width=280),
-                TableColumn(field="total_price", title="teljes összeg", width=150),
-                TableColumn(field="ordered by", title="megrendelő"),
-                TableColumn(field="paid", title="kifizetve", width=80),
-                TableColumn(field="created", title="készítve", width=170),
-                TableColumn(field="updated", title="módosítva"),
-                TableColumn(field="position_id", title="pozíció ID", width=150),
+                TableColumn(field="total_price", title="teljes összeg", width=90),
+                TableColumn(field="ordered by", title="megrendelő", width=100),
+                TableColumn(field="paid", title="kifizetve", width=60),
+                TableColumn(field="created", title="készítve",width=60),
+                TableColumn(field="updated", title="módosítva", width=100),
+                TableColumn(field="position_id", title="pozíció ID", width=60),
                 TableColumn(field="meal_full", title="étel"),
-                TableColumn(field="quantity:", title="mennyiség", width=120),
-                TableColumn(field="price", title="ár", width=120),
+                TableColumn(field="quantity:", title="mennyiség", width=60),
+                TableColumn(field="price", title="ár", width=60),
             ]
             data_table_merged = DataTable(source=source_merged, columns=columns, width=1200)
 
@@ -348,15 +441,30 @@ def queries_view(request):
 
             ## BAR PLOT ###
             if only_self:
-                # print(order_df)
-                # print('###')
-                # print(pd.unique(order_df['created']))
-                source = ColumnDataSource(order_df[['total_price', 'created']])
-                bar = figure(x_range=pd.unique(order_df['created']), plot_height=250, title="Költéseim:", tools = '',
+                #tartozások
+                tartozasok = int(order_df.groupby('paid').sum().iloc[0, 1])
+                print(order_df.groupby('paid').sum())
+                # rendeleseim_df = order_df.groupby('created').sum('total_price')
+                rendeleseim_df = order_df.groupby('created').agg({'total_price': 'sum', 'paid': 'min'})
+                # print(rendeleseim_df2)
+                rendeleseim_df_index = list(rendeleseim_df.index)
+                colors = []
+                def color(tag):
+                        if tag == True:
+                            return 'blue'
+                        else:
+                            return 'red'
+
+                rendeleseim_df['colors'] = rendeleseim_df['paid'].apply(color)
+
+                print(rendeleseim_df)
+                source = ColumnDataSource(rendeleseim_df)
+                bar = figure(x_range=rendeleseim_df_index, plot_height=250, plot_width=800, title="Költéseim:", tools = '',
                              tooltips="@total_price Ft")
-                bar.vbar(x='created', top='total_price', width=0.9, source=source)
-                # show(bar)
-                # to_convert['bar'] = bar
+                bar.vbar(x='created', top='total_price', width=0.4, source=source, fill_color = 'colors')
+                bar.xaxis.major_label_orientation = "vertical"
+                bar.toolbar.autohide = True
+                to_convert['bar'] = bar
 
             script_table_meal, div_table_meal = components(to_convert)
             ######################### BOKEH VÉGE #################
@@ -367,6 +475,8 @@ def queries_view(request):
                 row = f"{str(df_meals.iloc[i, 1])}x - {str(df_meals.iloc[i, 0])}"
                 meals.append(row)
                 # print(row)
+
+            sum = int(order_df['total_price'].sum())
 
             order_df = order_df.to_html()
             merged_df = merged_df.to_html()
@@ -413,6 +523,8 @@ def queries_view(request):
         # 'df_user': df_user,
         # 'df_pos': df_pos_html,
         'meals': meals,
+        'tartozasok': tartozasok,
+        'sum': sum,
     }
 
 
