@@ -285,10 +285,6 @@ def statistics(request):
     # Összes tartozás
     # Összes költés a megadott időtartamban
     profile = Profile.objects.get(user=request.user)
-    qs = Order.objects.filter(customer = profile).order_by('-created')
-    qs_not_payed = qs.filter(paid = False)
-    last_month = date.now().strftime('%Y-%M-%d')
-    last_month_qs = qs
 
     context = {
         "profile": profile
@@ -443,7 +439,12 @@ def queries_view(request):
             if only_self:
                 #tartozások
                 tartozasok = int(order_df.groupby('paid').sum().iloc[0, 1])
-                print(order_df.groupby('paid').sum())
+                tart_df = order_df.groupby('paid').sum()
+                if False in tart_df.index.values:
+                    tartozasok = int(tart_df.loc[False, 'total_price'])
+                else:
+                    tartozasok = '0'
+                
                 # rendeleseim_df = order_df.groupby('created').sum('total_price')
                 rendeleseim_df = order_df.groupby('created').agg({'total_price': 'sum', 'paid': 'min'})
                 # print(rendeleseim_df2)

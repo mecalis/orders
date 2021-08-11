@@ -32,7 +32,7 @@ def blog_post_list_view(request):
     # print('Eddig id:', profile.last_post_id)
     # print('új post db, ',len(qs_new))
     # print('régi post db, ',len(qs_old))
-    qs = BlogPost.objects.last()
+    qs = BlogPost.objects.order_by('-id')[0]
     # print(qs.id)
     if qs:
         profile.last_post_id = qs.id
