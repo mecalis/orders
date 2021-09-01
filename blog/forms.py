@@ -20,17 +20,7 @@ class BlogPostModelForm(forms.ModelForm):
         # widgets = {
         #         'publish_date': forms.DateTimeInput(attrs={'type': 'date'}, format='%Y-%m-%d %H:%M')
         #     }
-        labels = {
-            'title': 'cím',
-            'image': 'kép',
-            'slug': 'slug',
-            'content': 'leírás',
-            # 'publish_part_date': 'megjelenés napja',
-            # 'publish_part_time': 'megjelenés ideje',
-        }
-        help_texts = {
-            'slug': 'A böngészőben megjelenő url, általában a cím kötőjelekkel elválasztva. Szóközt nem tartalmazhat! pl.: Cím: ma használt cím => Slug: ma-hasznalt-cim',
-        }
+
 
     def clean_title(self, *args, **kwargs):
         instance = self.instance

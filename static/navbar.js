@@ -24,4 +24,32 @@ $(document).ready(function() {
         processData: false,
         contentType: false,
      });
+
+     $.ajax({
+        type: 'GET',
+        url: '/my-profile/get-daily-waiter/',
+        data: '',
+        success: function(response){
+                console.log('siker');
+                var last_waiter = response['last_waiter'];
+                console.log(last_waiter);
+                var span = document.getElementById('last_waiter');
+                if (last_waiter) {
+                    span.innerHTML = `
+                        <span style="color: red;">
+                            ${last_waiter}!
+                        </span>
+                    `
+                }
+                else {
+                    span.innerHTML = 'Még nincs vállalkozó... :('
+                }
+        },
+        error: function(error){
+            console.log(error)
+
+        },
+        processData: false,
+        contentType: false,
+     });
 });

@@ -1,13 +1,14 @@
 from django.shortcuts import render, redirect
-from .models import Profile
+from .models import Profile, DailyWaiter
 
 from django.contrib.auth.decorators import login_required
 from django.contrib.auth import authenticate, login, logout
 from django.contrib.auth.mixins import LoginRequiredMixin
 
 from .forms import UserForm
-from django.views.generic import View
-from .forms import ProfileForm
+from django.views.generic import View, CreateView
+from django.views.generic.edit import FormView
+from .forms import ProfileForm, DailyWaiterModelForm, DailyWaiterForm
 
 
 # REG EMAIL segítségével
@@ -24,7 +25,6 @@ from django.core.mail import send_mail
 # from django.shortcuts import render, redirect
 from django.conf import settings
 
-
 #activate
 # from django.contrib.auth import login
 from django.contrib.auth.models import User
@@ -33,12 +33,53 @@ from django.utils.encoding import force_text
 from django.utils.http import urlsafe_base64_decode
 # from .tokens import account_activation_token
 
+from datetime import datetime, date
+from django.http import JsonResponse
+
+
+class DailyWaiterModelFormView(FormView):
+    template_name = 'profiles/dailywaiter_form.html'
+    form_class = DailyWaiterModelForm
+    # success_url = 'orders/home'
+
+class DailyWaiterCreateView(CreateView):
+    # template_name = 'profiles/dailywaiter_form.html'
+    model = DailyWaiter
+    fields = ['day', 'user']
+
+def daily_waiter_create_view(request):
+    if 'msg' in request.session:
+        del request.session['msg']
+    template_name = 'profiles/dailywaiter_form.html'
+    if request.method == 'POST':
+        form = DailyWaiterForm(request.POST)
+        if form.is_valid():
+            user = form.cleaned_data['user']
+            day = form.cleaned_data['day']
+            obj = DailyWaiter(user = user, day = day)
+            obj.save()
+
+            request.session['msg'] = 'Sikeresen hozzáadtad egy pincért az adott naphoz!'
+
+            return redirect('orders:home')
+    else:
+        form = DailyWaiterForm()
+    return render(request, template_name, {'form': form})
+
+def get_last_waiter_view(request):
+    if request.method == "GET" and request.is_ajax():
+        last_waiter = DailyWaiter.objects.filter(day = date.today()).order_by('-created')
+        if last_waiter:
+            last_waiter = last_waiter[0].user
+        else:
+            last_waiter = None
+        return JsonResponse({'msg': 'siker', 'last_waiter': last_waiter})
+
 # Create your views here.
 @login_required
 def my_profile_view(request):
     profile = Profile.objects.get(user=request.user)
     form = ProfileForm(request.POST or None, request.FILES or None, instance=profile)
-
     confirm = False
     if form.is_valid():
         form.save()

@@ -8,7 +8,12 @@
             </div>
             {% if obj.boxes == '1' or obj.boxes == '2' %}
             <div class="form-check col-sm-1 box1 mt-1">
-                <input class="form-check-input meal_box meal_box_1" type="checkbox" id="box1_{{ obj.pk }}_gridCheck1" checked>
+                {% if boxes_needed %}
+                    <input class="form-check-input meal_box meal_box_1" type="checkbox" id="box1_{{ obj.pk }}_gridCheck1" checked>
+                {% else %}
+                    <input class="form-check-input meal_box meal_box_1" type="checkbox" id="box1_{{ obj.pk }}_gridCheck1" >
+                {% endif %}
+
                 <label class="form-check-label" for="box1_{{ obj.pk }}_gridCheck1">
                   Box1
                 </label>
@@ -16,7 +21,12 @@
             {% endif %}
             {% if obj.boxes == '2' %}
             <div class="form-check col-sm-1 box2 mt-1">
-                <input class="form-check-input meal_box meal_box_2" type="checkbox" id="box2_{{ obj.pk }}_gridCheck2" checked>
+                {% if boxes_needed %}
+                    <input class="form-check-input meal_box meal_box_2" type="checkbox" id="box2_{{ obj.pk }}_gridCheck2" checked>
+                {% else %}
+                    <input class="form-check-input meal_box meal_box_2" type="checkbox" id="box2_{{ obj.pk }}_gridCheck2">
+                {% endif %}
+
                 <label class="form-check-label" for="box2_{{ obj.pk }}_gridCheck2">
                 Box2
                 </label>

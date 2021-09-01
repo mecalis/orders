@@ -67,6 +67,9 @@ home
 <!--    <h3>No data</h3>-->
 {% endif %}
 <div id="alert-box"></div>
+{% if request.session.bar %}
+    <div>  {{ request.session.msg }} </div>
+{% endif %}
 <button type="button" id="make-order" data-bs-toggle="modal" data-bs-target="#order-modal" class="btn btn-primary ">Rendelés véglegesítése</button>
 <hr>
 <form id="order_form">

@@ -1,0 +1,21 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+
+{% block title %}
+my profile
+{% endblock title %}
+
+{% block content %}
+<h3>
+    Ki szeretne a nap pincére lenni?
+</h3>
+<div>(Minden nap a legutolsó jelentkező kerül megjelenítésre. Kérlek használd felelősséggel ezt a menüpontot!)</div>
+
+<form method="post" class="mt-3">
+        {% csrf_token %}
+        {{ form|crispy }}
+        <button type='submit' class="btn btn-primary rounded-md mt-2">Legyen úgy!!</button>
+</form>
+
+
+{% endblock content %}

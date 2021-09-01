@@ -8,8 +8,8 @@ from django.http import JsonResponse
 # Create your views here.
 from .forms import BlogPostModelForm
 from .models import BlogPost
-from profiles.models import Profile
-from datetime import datetime
+from profiles.models import Profile, DailyWaiter
+from datetime import datetime, date
 
 #from ..forms import UserFrorm
 
@@ -96,7 +96,6 @@ def blog_post_count_view(request):
         # html = f"<html><body>It is now  {count}</body></html>"
         # return HttpResponse(html)
         return JsonResponse({'msg': 'siker', 'count': count})
-
 
 
 
